@@ -4,6 +4,7 @@ Documentation : https://misportal.jlab.org/ul/Physics/Hall-B/clas/viewFile.cfm/2
 
 How to compile :
 > source setenv.txt
+> 
 > make 
 
 Clean executables :
