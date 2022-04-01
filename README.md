@@ -11,6 +11,9 @@ Clean executables :
 > make clean
 
 Run genepi :
-bin/genepi.cc input_file.input
 
-An example of input_file can be found in input_files/
+> bin/genepi.cc input_file.input
+
+An example of input_file can be found in 
+
+> input_files/
