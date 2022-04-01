@@ -1,0 +1,6 @@
+#!/bin/tcsh -f
+
+setenv ROOTSYS /apps/root/6.10.02/root
+setenv ROOTLIB /apps/root/6.10.02/root/lib
+setenv LD_LIBRARY_PATH ${PATH}:${ROOTSYS}/lib
+setenv PATH ${PATH}:${ROOTSYS}/bin

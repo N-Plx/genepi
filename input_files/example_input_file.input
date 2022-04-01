@@ -1,0 +1,65 @@
+//Nb of Events
+GENE EVENTS 10000
+
+//Beam energy
+BEAM    ENERGY   10.6
+BEAM    CHRG     -1
+BEAM    HELI      0
+
+//Target
+TARGET A        1
+TARGET Z        1
+TARGET HELI      0
+
+//Kinematic cuts
+KINEMATIC  XBJ      0.001       1.0
+KINEMATIC  Y        0.001       1.0
+KINEMATIC  Q2       1.000      20.0
+KINEMATIC  W2       4.000      50.0
+KINEMATIC  NU       0.300      11.0
+KINEMATIC  T        -1.20       0.0
+KINEMATIC  YCOL  -999.000       0.025
+
+//BH xsec element de volume 
+// =1; Differential cross section in the lab frame in nb.GeV-2.rd-2
+// d5sigma/(dx_B dy dt dPhi_e dPhi_g)
+// =2; Differential cross section in the lab frame in nb.GeV-1.sr-2
+// d5sigma/(dk_e dOmega_e dOmega_g)
+// ELSE; Differential cross section in the lab frame in nb.GeV-4.rd-2
+// d5sigma/(dQ2 dx_B dt dPhi_e dPhi_g)
+XSEC DIFF 3
+
+//output directory where ntuples will reside
+PROD DIR  .
+
+APPEND DATE 0
+
+//produce root ntuple
+NTUP FILL          0
+NTUP EVTSPERNTUP   5000000
+
+//produce ascii file for geant4
+PROD ASCII 1
+
+//mode=0 ascii file in HEPEVT format for geant4
+//mode=1 ascii file in LUJETS format
+//mode=2 ascii file in LUND format for gemc
+PROD FORMAT 2
+
+// Number of events in each ascii file
+OUTPUT EVTSPERFILE  200000000000
+
+// print after each PRINT events
+OUTPUT PRINT 1000000
+
+//SEED
+SEED APPLY 1
+
+// (0: BH/DVCS, 1: excl. pi0/eta)
+PROC    TYPE       0
+
+// (0, 1, 2, 3, 4) See App. B for explanation.
+GPD    TYPE   1
+
+// (0: excl. pi0, 1: excl. eta)
+MESON    TYPE   0
