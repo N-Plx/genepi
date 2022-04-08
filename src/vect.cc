@@ -21,7 +21,7 @@ vector<double> VECT::init_vect()
 
 double VECT::mom_vect(vector<double> v)
 {
-  double mom;
+  double mom = 0;
   for(unsigned int i=0; i<3; i++) mom += v.at(i)*v.at(i);
 
   return sqrt(mom);
