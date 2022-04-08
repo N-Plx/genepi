@@ -1,22 +1,22 @@
 #include<cmath>
 
 inline double m_neut(double);
-inline double m_neut(double y) {return pow(0.93957,y);}
+inline double m_neut(double y) {return pow(0.939565413,y);}
 
 inline double m_prot(double);
-inline double m_prot(double y) {return pow(0.93827,y);}
+inline double m_prot(double y) {return pow(0.938272081,y);}
 
 inline double m_eta(double);
-inline double m_eta(double y) {return pow(0.54775,y);}
+inline double m_eta(double y) {return pow(0.547862,y);}
 
 inline double m_kaon(double);
 inline double m_kaon(double y) {return pow(0.49368,y);}
 
 inline double m_pion(double);
-inline double m_pion(double y) {return pow(0.13957,y);}
+inline double m_pion(double y) {return pow(0.13957061,y);}
 
 inline double m_pi0(double);
-inline double m_pi0(double y) {return pow(0.13498,y);}
+inline double m_pi0(double y) {return pow(0.1349770,y);}
 
 inline double m_elec(double);
 inline double m_elec(double y) {return pow(0.00051,y);}
@@ -73,10 +73,10 @@ int inline phot_ch();
 int inline phot_ch() {return 0;}
 
 inline double alpha(double);
-inline double alpha(double y) {return pow(1./137.0359998, y);}
+inline double alpha(double y) {return pow(1./137.0359991, y);}
 
 inline double hbarc(double);
-inline double hbarc(double y) {return pow(0.1973269602,y);}//GeV fm
+inline double hbarc(double y) {return pow(0.1973269788,y);}//GeV fm
 
 inline double tiny();
 inline double tiny() {return 1e-4;}
@@ -91,7 +91,7 @@ inline double torad();
 inline double torad() {return 0.01745;}
 
 inline double todeg();
-inline double todeg() {return 57.299578;}
+inline double todeg() {return 57.29578;}
 
 inline double xsecpi0();
 inline double xsecpi0() {return 394.73;}
