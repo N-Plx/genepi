@@ -83,8 +83,13 @@ void dump_file(int mode, int proc, double xsec)
 	  for(int i=2; i<hepevt.NHEP; i++)
 	    {
 	      if(i!=3){
+<<<<<<< HEAD
 		//Skip stupid events
 		if(hepevt.IDHEP[i] == -1000) continue;
+=======
+		//Skip stupid events                                                                                                                                                                               
+                if(hepevt.IDHEP[i] == -1000) continue;
+>>>>>>> bd01fc764bb4c4959e9003932ce78e78dd4d0977
 		// index, lifetime, active status
 		fprintf(ptr,"%d %d %d ", index, -1, 1); 
 		index++;
