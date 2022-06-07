@@ -23,7 +23,7 @@ void   prod_dir(string);
 double fer_mom_deut(int, double);
 double fer_mom_hel4(double);
 double fer_mom_nitro(TRandom1);
-int    fmotion(double, double, int, double, double, double, double, double, double, double, double, double*);
+int    fmotion(double, double, int, int, double, double, double, double, double, double, double, double, double*);
 
 double ups(double);
 double ums(double);
