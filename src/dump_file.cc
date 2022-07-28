@@ -4,7 +4,7 @@
 #include "dump_file.h"
 #include"vertex.h"
 
-void dump_file(int mode, int proc, double xsec)
+void dump_file(int mode, int proc, double xsec, int iApZ)
 {
   if(mode == 0)
     { 
@@ -52,9 +52,7 @@ void dump_file(int mode, int proc, double xsec)
 		  trk.Ntracks-4, trk.TarA, trk.Q2, trk.nu, trk.Theli, trk.Bheli);
 	  for(int i=2; i<trk.Ntracks; i++)
 	    {
-	      
-	      if(i!=3 && i!=6){
-		      
+	      if(i!=3 && i!=6){      
 		fprintf(ptr,"%5d %5d %5d %5d %5d\n",
 			1, trk.Type[i], trk.Type[i], 1, 1);
 		if(trk.Type[i]!=22 && trk.Type[i]!=11 && trk.Type[i]!=-11)fprintf(ptr,"%15.8f %15.8f %15.8f %15.8f %15.8f\n",  
@@ -98,10 +96,12 @@ void dump_file(int mode, int proc, double xsec)
       else if(proc == 1)
 	{
 	  fprintf(ptr,"%d %d %d %d %d %d %lf %d %d %lf\n", hepevt.NHEP-3-1, 2, 1, 0, 0, 
-	  	  11, hepevt.PHEP[0][3], hepevt.IDHEP[1], proc, xsec);
-	  for(int i=3; i<hepevt.NHEP; i++)
+		  11, hepevt.PHEP[0][3], hepevt.IDHEP[1], proc, xsec);
+	  for(int i=2; i<hepevt.NHEP; i++)
 	    {
-	      if(hepevt.IDHEP[i] != 111){
+	      int pi0index = 6;
+	      if(iApZ == 2) pi0index=5;
+	      if(i!=3 && i!=pi0index){
 		// index, lifetime, active status
 		fprintf(ptr,"%d %d %d ", index, -1, 1); 
 		index++;
