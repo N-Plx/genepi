@@ -24,6 +24,9 @@ inline double m_elec(double y) {return pow(0.00051,y);}
 inline double m_phot(double);
 inline double m_phot(double y) {return pow(0.00000,y);}
 
+inline double m_phi(double);
+inline double m_phi(double y) {return pow(1.01946,y);}
+
 int inline neut_id();
 int inline neut_id() {return 2112;}
 
@@ -50,6 +53,9 @@ int inline elec_id() {return 11;}
 
 int inline phot_id();
 int inline phot_id() {return 22;}
+
+int inline phi_id();
+int inline phi_id() {return 333;}
 
 int inline hel3_id();
 int inline hel3_id() {return 1234;}//FAKE

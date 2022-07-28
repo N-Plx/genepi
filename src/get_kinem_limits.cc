@@ -14,7 +14,7 @@ void get_kinem_limits(ReadOptFile *ro)
   double fQ2min(ro->get_fQ2min()), fQ2max(ro->get_fQ2max());
   double fNumin(ro->get_fNumin()), fNumax(ro->get_fNumax());
   double fW2min(ro->get_fW2min()), fW2max(ro->get_fW2max());
-
+  /*
   for(int j=0;j<2;j++)
   {
     fXbjmin = max(max(fXbjmin,fQ2min/(s*fYmax)), 
@@ -63,6 +63,7 @@ void get_kinem_limits(ReadOptFile *ro)
     fNumax = min(fNumax,
                  min(ro->get_fEb(),(fW2max+fQ2max-M_TARG2)/(2.*M_TARG)));
   }
+  */
   ro->set_fXbjmin(fXbjmin); ro->set_fXbjmax(fXbjmax);
   ro->set_fYmin(fYmin);     ro->set_fYmax(fYmax);
   ro->set_fQ2min(fQ2min);   ro->set_fQ2max(fQ2max);

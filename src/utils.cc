@@ -253,6 +253,10 @@ double m_ms(int i, double y)
   {
     ms = m_eta(y);
   }
+  else if (i == 2) // phi
+    {
+      ms = m_phi(y);
+    }
   return ms;
 }
 
@@ -268,5 +272,9 @@ int ms_id(int i)
   {
     id = eta_id();
   }
+  else if(i == 2) //phi
+    {
+      id = phi_id();
+    }
   return id;
 }

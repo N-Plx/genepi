@@ -257,6 +257,10 @@ int ReadOptFile::ReadInputFile(const char* inpfile)
     {
       cout<<"eta electroproduction process"<<endl;
     }
+    else if(fIms == 2)
+      {
+	cout<<"phi electroproduction process"<<endl;
+      }
     else
     {
       cout<<"unknown meson"<<endl;

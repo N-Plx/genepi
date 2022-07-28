@@ -97,5 +97,5 @@ public:
 };
 
 void   get_kinem_limits(ReadOptFile*);
-double ms_xsec(ReadOptFile*, double, double, double, double);
+double ms_xsec(ReadOptFile*, double, double, double, double, int, double);
 int    get_ms(ReadOptFile*, double, double, double, double, double, double, double);
