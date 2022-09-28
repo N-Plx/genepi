@@ -2,7 +2,9 @@
 
 Documentation : https://misportal.jlab.org/ul/Physics/Hall-B/clas/viewFile.cfm/2009-024.pdf?documentId=554
 
-How to compile :
+How to compile (on ifarm, on a clean environment) :
+> mkdir bin //Create an empty bin directory where the executable will live
+>
 > source setenv.txt
 > 
 > make 
