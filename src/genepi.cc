@@ -8,6 +8,7 @@
   Restructuring / kinematic bug-fixes, phi-meson production : Daria Sokhan, CEA Saclay / Glasgow
 */
 
+#include <getopt.h>
 #include "genepi.h"
 #include "inl_funcs.h"
 #include "lujets_cc.h"
@@ -111,65 +112,410 @@ FILE *ptr;
 
 int main(int argc, char*argv[])
 {
+  //Erase previous file
+  cout << "Erasing previous file content" << endl;
+  ptr = fopen("genepi.dat","w");
+  fclose(ptr);
   
-  if(argc != 2)
+  //INPUT VARIABLES                                   
+  //Beam helicity, target helicity, x_sec type, gpd type hard-coded                                                                                                                                              
+  //All other options can be chosen via command line
+  int num_of_ev = 10000, seed;
+  bool seed_spec = 0;
+  double Ebeam = 10.6, beamcharge = -1, beamheli = 0; 
+  int targ_A = 1, targ_Z = 1, targ_heli = 0;
+  int process = 0, meson = 0;
+  double x_min = 0.001, x_max = 1.;
+  double y_min = 0.001, y_max = 1.;
+  double Q2_min=1., Q2_max=20.;
+  double  W2_min=4., W2_max=50.;
+  double nu_min=0.3,nu_max=11.;
+  double t_min = -1.2, t_max = 0.;
+  double  ycol_min = -999., ycol_max = 0.025;
+  int x_sec_type = 3, gpd_type = 1; 
+  
+  char* short_options = (char*)"a:b:c:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v::";
+  const struct option long_options[] = {
+    {"trig"    ,required_argument,NULL,'a'},//num_of_ev
+    {"docker"  ,required_argument,NULL,'b'},
+    {"seed"    ,required_argument,NULL,'c'},
+    {"x_min"   ,required_argument,NULL,'d'},
+    {"x_max"   ,required_argument,NULL,'e'},
+    {"y_min"   ,required_argument,NULL,'f'},
+    {"y_max"   ,required_argument,NULL,'g'},
+    {"Q2_min"  ,required_argument,NULL,'h'},
+    {"Q2_max"  ,required_argument,NULL,'i'},
+    {"W2_min"  ,required_argument,NULL,'j'},
+    {"W2_max"  ,required_argument,NULL,'k'},
+    {"nu_min"  ,required_argument,NULL,'l'},
+    {"nu_max"  ,required_argument,NULL,'m'},
+    {"t_min"   ,required_argument,NULL,'n'},
+    {"t_max"   ,required_argument,NULL,'o'},
+    {"ycol_min",required_argument,NULL,'p'},
+    {"ycol_max",required_argument,NULL,'q'},
+    {"Ebeam"   ,required_argument,NULL,'r'},
+    {"process" ,required_argument,NULL,'s'},
+    {"meson"   ,required_argument,NULL,'t'},
+    {"targ_A"  ,required_argument,NULL,'u'},
+    {"targ_Z"  ,required_argument,NULL,'v'},
+    {NULL,0,NULL,0}
+  };
+
+  int rez;
+  int option_index;
+
+  cout<<'\n';
+
+  while ((rez=getopt_long(argc,argv,short_options,long_options,&option_index))!=-1)
     {
-      cout<<"Error"<<endl;
-      cout<<"Usage:"<<endl;
-      cout<<"./genepi.exe <Option_file>"<<endl;
-      return 0;
-    }
-  
+      switch(rez)
+        {
+        case 'a':
+          {
+            if (optarg!=NULL)
+              {
+                cout<<"Number of events "<<optarg<<endl;
+                num_of_ev=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value (1) will be used"<<endl;
+              }
+            break;
+          };
+
+        case 'b':
+          {
+            cout<<"docker option is ignored"<<endl;
+            break;
+          };
+	case 'c':
+          {
+	    seed_spec = 1;
+            if (optarg!=NULL)
+              {
+                cout<<"seed is set to "<<optarg<<" "<<endl;
+                seed=atof(optarg);
+              }
+            else
+              {
+                cout<<"time seed will be used"<<endl;
+              }
+            break;
+          };
+
+        case 'd':
+          {
+            if (optarg!=NULL)
+              {
+                x_min=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"x_min is set to "<< x_min <<" "<<endl;
+            break;
+          };
+	case 'e':
+          {
+            if (optarg!=NULL)
+              {
+                x_max=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"x_max is set to "<< x_max <<" "<<endl;
+            break;
+          };
+
+        case 'f':
+          {
+            if (optarg!=NULL)
+              {
+                y_min=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"y_min is set to "<< y_min <<" "<<endl;
+            break;
+          };
+	case 'g':
+          {
+            if (optarg!=NULL)
+              {
+                y_max=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"y_max is set to "<< y_max <<" "<<endl;
+            break;
+          };
+
+        case 'h':
+          {
+            if (optarg!=NULL)
+              {
+                Q2_min=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"Q2_min is set to "<< Q2_min <<" GeV^2"<<endl;
+            break;
+          };
+	case 'i':
+          {
+            if (optarg!=NULL)
+              {
+                Q2_max=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"Q2_max is set to "<< Q2_max <<" GeV^2"<<endl;
+            break;
+          };
+	case 'j':
+          {
+            if (optarg!=NULL)
+              {
+                W2_min=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"W2_min is set to "<< W2_min <<" GeV^2"<<endl;
+            break;
+          };
+
+        case 'k':
+          {
+            if (optarg!=NULL)
+              {
+                W2_max=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"W2_max is set to "<< W2_max <<" GeV^2"<<endl;
+            break;
+          };
+	case 'l':
+          {
+            if (optarg!=NULL)
+              {
+                nu_min=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"nu_min is set to "<< nu_min <<" GeV"<<endl;
+            break;
+          };
+	case 'm':
+          {
+            if (optarg!=NULL)
+	      {
+                nu_max=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"nu_max is set to "<< nu_max <<" GeV"<<endl;
+            break;
+          };
+
+        case 'n':
+          {
+            if (optarg!=NULL)
+              {
+                t_min=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"t_min is set to "<< t_min <<" GeV"<<endl;
+            break;
+          };
+	case 'o':
+          {
+            if (optarg!=NULL)
+              {
+                t_max=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"t_max is set to "<< t_max <<" GeV"<<endl;
+            break;
+          };
+
+        case 'p':
+          {
+            if (optarg!=NULL)
+              {
+                ycol_min=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"ycol_min is set to "<< ycol_min <<" "<<endl;
+            break;
+          };
+	case 'q':
+          {
+            if (optarg!=NULL)
+              {
+                ycol_max=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"ycol_max is set to "<< ycol_max <<" "<<endl;
+            break;
+          };
+
+        case 'r':
+          {
+            if (optarg!=NULL)
+              {
+                Ebeam=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"Ebeam is set to "<< Ebeam <<" GeV"<<endl;
+            break;
+          };
+	case 's':
+          {
+            if (optarg!=NULL)
+              {
+                process=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"process is set to "<< process <<" "<<endl;
+            break;
+          };
+        case 't':
+          {
+            if (optarg!=NULL)
+              {
+                meson=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"meson is set to "<< meson <<" "<<endl;
+            break;
+          };
+	case 'u':
+          {
+            if (optarg!=NULL)
+              {
+                targ_A=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"targ_A is set to "<< targ_A <<" "<<endl;
+            break;
+          };
+        case 'v':
+          {
+            if (optarg!=NULL)
+              {
+                targ_Z=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"targ_Z is set to "<< targ_Z <<" "<<endl;
+            break;
+          };
+	case '?': default:
+          {
+            cout << "found unknown option\n" << endl;
+            break;
+          };
+        };
+    };
+
   //============Handling input file and output location======================//
   
+  cout <<"Storing chosen options" << endl;
   ReadOptFile *ro = new ReadOptFile();
   DVCS *dv        = new DVCS();
   NuclFF *ff      = new NuclFF();
   VECT *vect      = new VECT();
+  ro->set_fProc(process);
+  ro->set_fIms(meson);
+  ro->set_fEb(Ebeam);
+  ro->set_fAt(targ_A);
+  ro->set_fZt(targ_Z);
+  ro->set_fXbjmin(x_min);
+  ro->set_fXbjmax(x_max);
+  ro->set_fYmin(y_min);
+  ro->set_fYmax(y_max);
+  ro->set_fQ2min(Q2_min);
+  ro->set_fQ2max(Q2_max);
+  ro->set_fW2min(W2_min);
+  ro->set_fW2max(W2_max);
+  ro->set_fNumin(nu_min);
+  ro->set_fNumax(nu_max);
+  ro->set_ftmin(t_min);
+  ro->set_ftmax(t_max);
+  ro->set_fYcolmin(ycol_min);
+  ro->set_fYcolmax(ycol_max);
+  ro->set_fAscii(1);
+  ro->set_fMode(2);
+  ro->set_fMgpd(1);
+  ro->set_fNevts(num_of_ev);
+  ro->set_fBchg(beamcharge);
+  ro->set_fBheli(beamheli);
+  ro->set_fTheli(targ_heli);
+  ro->set_fVol(x_sec_type);
+  string Dir(".");
+  prod_dir(Dir);
+  ro->set_fDir(Dir);
+  ro->set_fDate(0);
+  ro->set_fNtp(0);
+  ro->set_fNevtsPerNtup(100000);
+  ro->set_fNevtsPerFile(100000);
+  ro->set_fPrint(0);
+  ro->set_fRunnum(0);
   
-  string InputFile = argv[1];
-  if(fexist(InputFile.c_str()))
+  //If no seed was specified, get one from the current time
+  if(!seed_spec)
     {
-      cout<<"File "<<InputFile.c_str()<<" does not exist"<<endl;
-      return 0;
-    }
-  
-  if(ro->ReadInputFile(InputFile.c_str()) == -1)
-    {
-      cout<<"Unable to read input file"<<endl;
-      return 0;
-    }
-  
-  string fDir(ro->get_fDir());
-  if(ro->get_fDate() == 1)
-    {
-      fDir += get_date();
-      cout<<"output directory : "<<fDir<<endl;
-    }
-  
-  prod_dir(fDir);
-  
-  string cmd("cp "+InputFile+" "+fDir);
-  system(cmd.c_str());
-  
-  string fout0;
-  fout0 = fDir+"/summary.dat";
-  ofstream out0(fout0.c_str());
-  out0<<"This is the summary file"<<endl;
-  
-  int seed;
-  if(ro->get_fSeed() == 1)
-    {
+      cout << "Time seed" << endl;
       seed = get_seed();
-      cout<<"SEED: "<< seed <<endl;
-      out0<<"SEED: "<< seed <<endl;
     }
-  else
-    {
-      seed = ro->get_fSeed();
-    }
-  //  seed = 333;
-  
+
   //=================Seed for generation of kin variables=========================//
   TRandom1 rndm;           // changed from the original TRandom1, which is very slow, to TRandom3 
   rndm.SetSeed(seed);
@@ -222,8 +568,8 @@ int main(int argc, char*argv[])
     {
       target = "ND3";
     }
-  
-  out0<<"Target:  "<< target<<endl;
+  cout << "Your target is " << target << endl;
+  ////out0<<"Target:  "<< target<<endl;
   
   //Needed for root file output
   int ntp_cnt(0);
@@ -234,16 +580,17 @@ int main(int argc, char*argv[])
   if(ro->get_fNtp())
     {
       sprintf(root_file, "%s/ntup_%s_%3.2fgev_%d.root", 
-	      fDir.c_str(), target.c_str(), ro->get_fEb(), irunnum);
+	      Dir.c_str(), target.c_str(), ro->get_fEb(), irunnum);
       f    = new TFile(root_file,"RECREATE");
       tree = new TTree("DVCS", "/dvcs_tree");
       init_tree(tree);
       //TTree::SetMaxTreeSize(200000000);
       cout<<"Filling ntuple "<<root_file<<endl;
-      out0<<"Filling ntuple "<<root_file<<endl;
+      //out0<<"Filling ntuple "<<root_file<<endl;
     }
   
   //read GPDs from gpd_table.dat
+  cout << "Reading GPD table" << endl;
   string gpd_tbl=("gpd_table.dat");
   if(fexist(gpd_tbl.c_str()))
     {
@@ -254,6 +601,7 @@ int main(int argc, char*argv[])
   dv->read_gpds(gpd_tbl);
   
   //Kinematic variables initialization
+  cout << "Initialization" << endl;
   double xmin,   xmax;
   double numin,  numax;
   double Q2min,  Q2max;
@@ -293,7 +641,7 @@ int main(int argc, char*argv[])
 
   //Recoil, target
   double M_RECO(-1000.), M_RECO2(-1000.), M_TARG, M_TARG2;
-  //Ipn: proton or neutron, Ims: identify meson
+  //Ipn: proton(1) or neutron(0), Ims: identify meson
   int    Ipn, Ims, RECO_ID(-1000), RECO_CH(-1000);
   double cosThetakkp, cosThetaqqp, cosThetakpqp;
   //zero 3-vector 
@@ -331,47 +679,49 @@ int main(int argc, char*argv[])
   
   
   //=====================Start event loop===================//
-  
+  cout << "Start event loop" << endl;
   long long ievt = 0;
 
   //while(counter_kept_neut < ro->get_fNevts())
   //{
       for(long long ievt=0; ievt<ro->get_fNevts(); ievt++)
         {
-      //Get event info from input
-      trk.Evt_ID  = ievt;
-      trk.Bheli   = ro->get_fBheli();
-      trk.Theli   = ro->get_fTheli();
-      trk.Process = ro->get_fProc();
-      trk.ExcMS   = ro->get_fIms();
-      //Nevts_per_Ntup++;
-      
+	  //Get event info from input
+	  trk.Evt_ID  = ievt;
+	  trk.Bheli   = ro->get_fBheli();
+	  trk.Theli   = ro->get_fTheli();
+	  trk.Process = ro->get_fProc();
+	  trk.ExcMS   = ro->get_fIms();
+	  //Nevts_per_Ntup++;
+	  /*
       if(ievt%ro->get_fPrint() == 0)
 	{
 	  cout<<"Processing Event: "<<ievt<<"/"<<ro->get_fNevts()<<endl;
-	  out0<<"Processing Event: "<<ievt<<"/"<<ro->get_fNevts()<<endl;
-	}
-      
+	  //out0<<"Processing Event: "<<ievt<<"/"<<ro->get_fNevts()<<endl;
+	}*/
+      /*
       if(ro->get_fAscii() != 0 && ievt%ro->get_fNevtsPerFile() == 0)
 	{
 	  if(run<10)
 	    {
 	      sprintf(fdump, "%s/events_%s_run%d.dat", 
-		      fDir.c_str(), target.c_str(), irunnum);
+		      Dir.c_str(), target.c_str(), irunnum);
 	    }
 	  else if(run<100)
 	    {
 	      sprintf(fdump, "%s/events_%s_run%d.dat", 
-		      fDir.c_str(), target.c_str(), irunnum);
+		      Dir.c_str(), target.c_str(), irunnum);
 	    }
 	  else
 	    {
 	      sprintf(fdump, "%s/events_%s_run%d.dat", 
-		      fDir.c_str(), target.c_str(), irunnum);
+		      Dir.c_str(), target.c_str(), irunnum);
 	    }
 	  run++;
 	  ptr = fopen(fdump,"w+");
-	}
+	}*/
+     
+      ptr = fopen("genepi.dat","a");
       
       //Inititalization
       dv->init_dvcs();
@@ -644,7 +994,7 @@ int main(int argc, char*argv[])
 	{
 	  //cout<<"Event = "<<ievt<<
 	  //  "; nu out of range "<<numin<<" "<<nu<<" "<<numax<<endl;
-	  //out0<<"Event = "<<ievt<<
+	  ////out0<<"Event = "<<ievt<<
 	  //  "; nu out of range "<<numin<<" "<<nu<<" "<<numax<<endl;
 	  
 	  outside_klim++;
@@ -667,8 +1017,8 @@ int main(int argc, char*argv[])
 	{
 	  cout<<"Event = "<<ievt<<"; Q2 out of range "<<
 	    Q2min<<" "<<Q2<<" "<<Q2max<<endl;
-	  out0<<"Event = "<<ievt<<"; Q2 out of range "<<
-	    Q2min<<" "<<Q2<<" "<<Q2max<<endl;
+	  //out0<<"Event = "<<ievt<<"; Q2 out of range "<<
+	  //  Q2min<<" "<<Q2<<" "<<Q2max<<endl;
 	  
 	  outside_klim++;
 	  outside_klim_Q2++;
@@ -700,8 +1050,8 @@ int main(int argc, char*argv[])
 	{
 	  cout<<"event "<<ievt<<"; xbj out of range "<<
 	    xmin<<" "<<xbj<<" "<<xmax<<endl;
-	  out0<<"event "<<ievt<<"; xbj out of range "<<
-	    xmin<<" "<<xbj<<" "<<xmax<<endl;
+	  //out0<<"event "<<ievt<<"; xbj out of range "<<
+	  //  xmin<<" "<<xbj<<" "<<xmax<<endl;
 	  
 	  outside_klim++;
 	  outside_klim_xb++;
@@ -729,7 +1079,7 @@ int main(int argc, char*argv[])
 	{
 	  //	  cout<<"event "<<ievt<<" W2 out of range "<<                                                                                        
 	  // W2min<<" "<<W2<<" "<<W2max<<endl;                                                                                                                      
-	  // out0<<"event "<<ievt<<" W2 out of range "<<                                                                                                                   
+	  // //out0<<"event "<<ievt<<" W2 out of range "<<                                                                                                                   
 	  // W2min<<" "<<W2<<" "<<W2max<<endl;                                                                          
 	  
 	  outside_klim++;
@@ -817,8 +1167,8 @@ int main(int argc, char*argv[])
 	{
 	  cout<<"event "<<ievt<<"; y out of range "<<
 	    ro->get_fYmin()<<" "<<y<<" "<<ro->get_fYmax()<<endl;
-	  out0<<"event "<<ievt<<"; y out of range "<<
-	    ro->get_fYmin()<<" "<<y<<" "<<ro->get_fYmax()<<endl;
+	  //out0<<"event "<<ievt<<"; y out of range "<<
+	  //  ro->get_fYmin()<<" "<<y<<" "<<ro->get_fYmax()<<endl;
 	  
 	  outside_klim++;
 	  outside_klim_y++;
@@ -891,7 +1241,7 @@ int main(int argc, char*argv[])
           if(t > tmax || t < tmin)
             {
 	      // cout<<"event "<<ievt<<"; t out of range "<<tmin<<" "<<t<<" "<<tmax<<endl;
-              //out0<<"event "<<ievt<<"; t out of range "<<tmin<<" "<<t<<" "<<tmax<<endl;
+              ////out0<<"event "<<ievt<<"; t out of range "<<tmin<<" "<<t<<" "<<tmax<<endl;
 	      
               outside_klim++;
               outside_klim_t++;
@@ -928,8 +1278,8 @@ int main(int argc, char*argv[])
             {
               cout<<"event "<<ievt<<"; nup out of range "<<
 		nupmin<<" "<<nup<<" "<<nupmax<<endl;
-              out0<<"event "<<ievt<<"; nup out of range "<<
-		nupmin<<" "<<nup<<" "<<nupmax<<endl;
+              //out0<<"event "<<ievt<<"; nup out of range "<<
+	      //	nupmin<<" "<<nup<<" "<<nupmax<<endl;
               
               outside_klim++;
 	      outside_klim_nup++;              
@@ -945,8 +1295,8 @@ int main(int argc, char*argv[])
             {
               cout<<"event "<<ievt<<"; Ep out of range "<<
 		Epmin<<" "<<Ep<<" "<<Epmax<<endl;
-              out0<<"event "<<ievt<<"; Ep out of range "<<
-		Epmin<<" "<<Ep<<" "<<Epmax<<endl;
+              //out0<<"event "<<ievt<<"; Ep out of range "<<
+	      //	Epmin<<" "<<Ep<<" "<<Epmax<<endl;
               
               outside_klim++;
 	      outside_klim_Ep++;
@@ -1039,7 +1389,7 @@ int main(int argc, char*argv[])
           if(fmotion(rndmt, rndmphi2, Ipn, ims_flag, q, nu, W2, P, ThetakP, PhikP, Thetakq, Phikq, ro->get_ftmin(), ro->get_ftmax(), Output) == -1)
             {
               //cout<<"Error in Fermi motion subroutine"<<endl;
-              //out0<<"Error in Fermi motion subroutine"<<endl;
+              ////out0<<"Error in Fermi motion subroutine"<<endl;
 	      
               outside_klim++;
               outside_klim_fm++;
@@ -1066,8 +1416,8 @@ int main(int argc, char*argv[])
 	      cout << "Non-stationary target " << endl;
 	      cout<<"event "<<ievt<<"; t out of range "<<
 	      	ro->get_ftmin()<<" "<<t<<" "<< ro->get_ftmax() <<endl;
-	      out0<<"event "<<ievt<<"; t out of range "<<
-	      	ro->get_ftmax() <<" "<<t<<" "<< ro->get_ftmax() <<endl;
+	      //out0<<"event "<<ievt<<"; t out of range "<<
+	      //	ro->get_ftmax() <<" "<<t<<" "<< ro->get_ftmax() <<endl;
 	      
               outside_klim++;
               outside_klim_t2++;
@@ -1148,7 +1498,7 @@ int main(int argc, char*argv[])
 	{
 	  //  cout<<"event "<<ievt<<"; t out of range "<<
 	  //    tmin<<" "<<t<<" "<<endl;
-	  //  out0<<"event "<<ievt<<"; t out of range "<<
+	  //  //out0<<"event "<<ievt<<"; t out of range "<<
 	  //   tmin <<" "<<t<<" "<<endl;
 
 	  outside_klim++;
@@ -1198,7 +1548,7 @@ int main(int argc, char*argv[])
 	  if(dv->phot_xsec(ro, ff, xbj, y, Q2, t, Phi_b) != 0 )
 	    {
 	      //cout<<"event "<<ievt<<"; Error in xsec calculation. "<<endl;
-	      //out0<<"event "<<ievt<<"; Error in xsec calculation. "<<endl;
+	      ////out0<<"event "<<ievt<<"; Error in xsec calculation. "<<endl;
 	      
 	      outside_klim++;
 	      outside_klim_xsec++;
@@ -1231,7 +1581,7 @@ int main(int argc, char*argv[])
 	  if(get_ms(ro, xbj, Q2, nu, nup, t, Phikkp, Phiqqp) != 0)
 	    {
 	      cout<<"event "<<ievt<<"; Error in xsec calculation. "<<endl;
-	      out0<<"event "<<ievt<<"; Error in xsec calculation. "<<endl;
+	      //out0<<"event "<<ievt<<"; Error in xsec calculation. "<<endl;
 	      
 	      outside_klim++;
 	      outside_klim_xsec++;
@@ -1243,7 +1593,7 @@ int main(int argc, char*argv[])
 	}
       else
 	{
-	  out0<<"You Should select a Process"<<endl;
+	  //out0<<"You Should select a Process"<<endl;
 	}
       
       //fill track
@@ -1594,20 +1944,20 @@ int main(int argc, char*argv[])
 	  if(ntp_cnt<10)
 	    {
 	      sprintf(root_file, "%s/ntup_%s_%3.2fgev_00%d.root", 
-		      fDir.c_str(), target.c_str(), Ee, ntp_cnt);
+		      Dir.c_str(), target.c_str(), Ee, ntp_cnt);
 	    }
 	  else if(ntp_cnt<100)
 	    {
 	      sprintf(root_file, "%s/ntup_%s_%3.2fgev_%0d.root", 
-		      fDir.c_str(), target.c_str(), Ee, ntp_cnt);
+		      Dir.c_str(), target.c_str(), Ee, ntp_cnt);
 	    }
 	  else
 	    {
 	      sprintf(root_file, "%s/ntup_%s_%3.2fgev_%d.root", 
-		      fDir.c_str(), target.c_str(), Ee, ntp_cnt);
+		      Dir.c_str(), target.c_str(), Ee, ntp_cnt);
 	    }
 	  cout<<"Start Filling ntuple "<<root_file<<endl;
-	  out0<<"Start Filling ntuple"<<endl;
+	  //out0<<"Start Filling ntuple"<<endl;
 	  f    = new TFile(root_file,"RECREATE");
 	  tree = new TTree("DVCS", "/dvcs_tree");
 	  init_tree(tree);
@@ -1681,41 +2031,41 @@ int main(int argc, char*argv[])
   cout<<endl;
   
   //Output summary file
-  out0<<"initial Number of events              "<<ro->get_fNevts()<<endl;
-  out0<<"Number of hit neutrons                "<<Nhit_neut       <<endl;
-  out0<<"Number of hit protons                 "<<Nhit_prot       <<endl;
+  //out0<<"initial Number of events              "<<ro->get_fNevts()<<endl;
+  //out0<<"Number of hit neutrons                "<<Nhit_neut       <<endl;
+  //out0<<"Number of hit protons                 "<<Nhit_prot       <<endl;
   if (iApZ_stored == 30 || iApZ_stored == 27)
     {
       cout<<"Number of events on N             "<<count_N      <<endl;
       cout<<"Number of events on H or D        "<<count_p      <<endl;
     }
-  out0<<"Number of events kept   " << counter_kept   <<endl;
-  out0<<"Number of events rejected   "<< counter_rejected   <<endl;
-  out0<<"Number of hit neutron events kept   " << counter_kept_neut   <<endl;
-  out0<<"Number of hit proton events kept   " << counter_kept_prot   <<endl;
-  out0<<"Number of events Out of kin. limits   "<< outside_klim   <<endl;
-  out0<<"Number of events Out of t limits   "<< outside_klim_t   <<endl;
-  out0<<"Number of events Out of t limits 2  "<< outside_klim_t2   <<endl;
-  out0<<"Number of events Out of t limits (tmin)  "<< outside_klim_tmin   <<endl;
-  out0<<"Number of events Out of nu limits   "<< outside_klim_nu   <<endl;
-  out0<<"Number of events Out of W2 limits   "<< outside_klim_W2   <<endl;
-  out0<<"Number of events Out of Q2 limits   "<< outside_klim_Q2   <<endl;
-  out0<<"Number of events Out of xb limits   "<< outside_klim_xb   <<endl;
-  out0<<"Number of events Out of y limits   "<< outside_klim_y   <<endl;
-  out0<<"Number of events Out of nup limits   "<< outside_klim_nup   <<endl;
-  out0<<"Number of events Out of Ep limits   "<< outside_klim_Ep   <<endl;
-  out0<<"Number of events Out of limits within the fmotion routine  "<< outside_klim_fm   <<endl;
-  out0<<"Number of events Out of xsec limits   "<< outside_klim_xsec   <<endl;
-  out0<<"kinem. limits :"<<endl;
-  out0<<"xbjmin   = "<<setw(10)<<Xmin  <<";    xbjmax   = "<<setw(10)<<Xmax  <<endl;
-  out0<<"ymin     = "<<setw(10)<<Ymin  <<";    ymax     = "<<setw(10)<<Ymax  <<endl;
-  out0<<"numin    = "<<setw(10)<<NUmin <<";    numax    = "<<setw(10)<<NUmax <<endl;
-  out0<<"Q2min    = "<<setw(10)<<QQ2min<<";    Q2max    = "<<setw(10)<<QQ2max<<endl;
-  out0<<"W2min    = "<<setw(10)<<WW2min<<";    W2max    = "<<setw(10)<<WW2max<<endl;
-  out0<<"tmin     = "<<setw(10)<<Tmin  <<";    tmax     = "<<setw(10)<<Tmax  <<endl;
-  out0<<"nupmin   = "<<setw(10)<<NUPmin<<";    nupmax   = "<<setw(10)<<NUPmax<<endl;
-  out0<<"Epmin    = "<<setw(10)<<EPmin <<";    Epmax    = "<<setw(10)<<EPmax <<endl;
-  out0<<endl;
+  //out0<<"Number of events kept   " << counter_kept   <<endl;
+  //out0<<"Number of events rejected   "<< counter_rejected   <<endl;
+  //out0<<"Number of hit neutron events kept   " << counter_kept_neut   <<endl;
+  //out0<<"Number of hit proton events kept   " << counter_kept_prot   <<endl;
+  //out0<<"Number of events Out of kin. limits   "<< outside_klim   <<endl;
+  //out0<<"Number of events Out of t limits   "<< outside_klim_t   <<endl;
+  //out0<<"Number of events Out of t limits 2  "<< outside_klim_t2   <<endl;
+  //out0<<"Number of events Out of t limits (tmin)  "<< outside_klim_tmin   <<endl;
+  //out0<<"Number of events Out of nu limits   "<< outside_klim_nu   <<endl;
+  //out0<<"Number of events Out of W2 limits   "<< outside_klim_W2   <<endl;
+  //out0<<"Number of events Out of Q2 limits   "<< outside_klim_Q2   <<endl;
+  //out0<<"Number of events Out of xb limits   "<< outside_klim_xb   <<endl;
+  //out0<<"Number of events Out of y limits   "<< outside_klim_y   <<endl;
+  //out0<<"Number of events Out of nup limits   "<< outside_klim_nup   <<endl;
+  //out0<<"Number of events Out of Ep limits   "<< outside_klim_Ep   <<endl;
+  //out0<<"Number of events Out of limits within the fmotion routine  "<< outside_klim_fm   <<endl;
+  //out0<<"Number of events Out of xsec limits   "<< outside_klim_xsec   <<endl;
+  //out0<<"kinem. limits :"<<endl;
+  //out0<<"xbjmin   = "<<setw(10)<<Xmin  <<";    xbjmax   = "<<setw(10)<<Xmax  <<endl;
+  //out0<<"ymin     = "<<setw(10)<<Ymin  <<";    ymax     = "<<setw(10)<<Ymax  <<endl;
+  //out0<<"numin    = "<<setw(10)<<NUmin <<";    numax    = "<<setw(10)<<NUmax <<endl;
+  //out0<<"Q2min    = "<<setw(10)<<QQ2min<<";    Q2max    = "<<setw(10)<<QQ2max<<endl;
+  //out0<<"W2min    = "<<setw(10)<<WW2min<<";    W2max    = "<<setw(10)<<WW2max<<endl;
+  //out0<<"tmin     = "<<setw(10)<<Tmin  <<";    tmax     = "<<setw(10)<<Tmax  <<endl;
+  //out0<<"nupmin   = "<<setw(10)<<NUPmin<<";    nupmax   = "<<setw(10)<<NUPmax<<endl;
+  //out0<<"Epmin    = "<<setw(10)<<EPmin <<";    Epmax    = "<<setw(10)<<EPmax <<endl;
+  //out0<<endl;
   
   return 0;
 }

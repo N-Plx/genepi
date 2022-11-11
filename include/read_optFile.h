@@ -83,17 +83,42 @@ public:
   int    get_fIpn()     {return fIpn;}
   int    get_fRunnum()     {return fRunnum;}
 
-  void set_fXbjmin(double Xbjmin) {fXbjmin = Xbjmin;}
-  void set_fXbjmax(double Xbjmax) {fXbjmax = Xbjmax;}
-  void set_fYmin(double Ymin)     {fYmin = Ymin;}
-  void set_fYmax(double Ymax)     {fYmax = Ymax;}
-  void set_fQ2min(double Q2min)   {fQ2min = Q2min;}
-  void set_fQ2max(double Q2max)   {fQ2max = Q2max;}
-  void set_fW2min(double W2min)   {fW2min = W2min;}
-  void set_fW2max(double W2max)   {fW2max = W2max;}
-  void set_fNumin(double Numin)   {fNumin = Numin;}
-  void set_fNumax(double Numax)   {fNumax = Numax;}
-  void set_fIpn(int Ipn)          {fIpn=Ipn;}
+  void set_fProc(int process)   {fProc = process;}
+  void set_fIms(int Ims)        {fIms = Ims;}
+  void set_fEb(double Eb)          {fEb = Eb;}
+  void set_fAt(int At)          {fAt = At;}
+  void set_fZt(int Zt)          {fZt = Zt;}
+  void set_fXbjmin(double Xbjmin)  {fXbjmin = Xbjmin;}
+  void set_fXbjmax(double Xbjmax)  {fXbjmax = Xbjmax;}
+  void set_fYmin(double Ymin)      {fYmin = Ymin;}
+  void set_fYmax(double Ymax)      {fYmax = Ymax;}
+  void set_ftmin(double tmin)      {ftmin = tmin;}
+  void set_ftmax(double tmax)      {ftmax = tmax;}
+  void set_fYcolmin(double Ycolmin){fYcolmin = Ycolmin;}
+  void set_fYcolmax(double Ycolmax){fYcolmax = Ycolmax;}
+  void set_fQ2min(double Q2min)    {fQ2min = Q2min;}
+  void set_fQ2max(double Q2max)    {fQ2max = Q2max;}
+  void set_fW2min(double W2min)    {fW2min = W2min;}
+  void set_fW2max(double W2max)    {fW2max = W2max;}
+  void set_fNumin(double Numin)    {fNumin = Numin;}
+  void set_fNumax(double Numax)    {fNumax = Numax;}
+  void set_fIpn(int Ipn)           {fIpn=Ipn;}
+  void set_fAscii(int Ascii)       {fAscii=Ascii;}
+  void set_fMode(int Mode)         {fMode=Mode;}
+  void set_fMgpd(int Mgpd)         {fMgpd=Mgpd;}
+  void set_fNevts(int Nevts)       {fNevts=Nevts;}
+  void set_fBchg(int Bchg)         {fBchg=Bchg;}
+  void set_fBheli(int Bheli)       {fBheli=Bheli;}
+  void set_fTheli(int Theli)       {fTheli=Theli;}
+  void set_fVol(int Vol)           {fVol=Vol;}  
+  void set_fDir(string Dir)           {fDir=Dir;}
+  void set_fDate(int Date)         {fDate=Date;}
+  void set_fNtp(int Ntp)           {fNtp=Ntp;}
+  void set_fNevtsPerNtup(int NevtsPerNtup)         {fNevtsPerNtup=NevtsPerNtup;}  
+  void set_fNevtsPerFile(int NevtsPerFile)         {fNevtsPerFile=NevtsPerFile;}
+  void set_fPrint(int Print)           {fPrint=Print;}
+  void set_fSeed(int Seed)           {fSeed=Seed;}
+  void set_fRunnum(int Runnum)           {fRunnum=Runnum;}
 };
 
 void   get_kinem_limits(ReadOptFile*);
