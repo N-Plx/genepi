@@ -1,5 +1,5 @@
 CCSRCS     = $(wildcard *.cc)
-EXE        = genepi.exe
+EXE        = genepi
 FSRCS      = $(wildcard *.f)
 
 CXX        = g++
