@@ -684,29 +684,31 @@ int main(int argc, char*argv[])
 
   //while(counter_kept_neut < ro->get_fNevts())
   //{
-      for(long long ievt=0; ievt<ro->get_fNevts(); ievt++)
-        {
-	  //Get event info from input
-	  trk.Evt_ID  = ievt;
-	  trk.Bheli   = ro->get_fBheli();
-	  trk.Theli   = ro->get_fTheli();
-	  trk.Process = ro->get_fProc();
-	  trk.ExcMS   = ro->get_fIms();
-	  //Nevts_per_Ntup++;
-	  /*
-      if(ievt%ro->get_fPrint() == 0)
+  //for(long long ievt=0; ievt<ro->get_fNevts(); ievt++)
+  while(counter_kept<ro->get_fNevts())  
+    {
+      ievt++;
+      //Get event info from input
+      trk.Evt_ID  = ievt;
+      trk.Bheli   = ro->get_fBheli();
+      trk.Theli   = ro->get_fTheli();
+      trk.Process = ro->get_fProc();
+      trk.ExcMS   = ro->get_fIms();
+      //Nevts_per_Ntup++;
+      /*
+	if(ievt%ro->get_fPrint() == 0)
 	{
-	  cout<<"Processing Event: "<<ievt<<"/"<<ro->get_fNevts()<<endl;
-	  //out0<<"Processing Event: "<<ievt<<"/"<<ro->get_fNevts()<<endl;
+	cout<<"Processing Event: "<<ievt<<"/"<<ro->get_fNevts()<<endl;
+	//out0<<"Processing Event: "<<ievt<<"/"<<ro->get_fNevts()<<endl;
 	}*/
       /*
-      if(ro->get_fAscii() != 0 && ievt%ro->get_fNevtsPerFile() == 0)
+	if(ro->get_fAscii() != 0 && ievt%ro->get_fNevtsPerFile() == 0)
 	{
 	  if(run<10)
-	    {
-	      sprintf(fdump, "%s/events_%s_run%d.dat", 
-		      Dir.c_str(), target.c_str(), irunnum);
-	    }
+	  {
+	    sprintf(fdump, "%s/events_%s_run%d.dat", 
+		    Dir.c_str(), target.c_str(), irunnum);
+	  }
 	  else if(run<100)
 	    {
 	      sprintf(fdump, "%s/events_%s_run%d.dat", 
@@ -720,8 +722,8 @@ int main(int argc, char*argv[])
 	  run++;
 	  ptr = fopen(fdump,"w+");
 	}*/
-     
-      ptr = fopen("genepi.dat","a");
+      
+      //ptr = fopen("genepi.dat","a");
       
       //Inititalization
       dv->init_dvcs();
@@ -1870,6 +1872,7 @@ int main(int argc, char*argv[])
 	    for(int ij=0; ij<lujets_cc.N; ij++) lujets_cc.V[ii][ij] = 0;
 
 	  //Fill hepevt common block
+	 
 	  hepevt.NHEP = lujets_cc.N;
 
 	  for(int ii=0; ii<hepevt.NHEP; ii++)
@@ -1907,10 +1910,12 @@ int main(int argc, char*argv[])
 	  //=====================================KEEP REJECT======================================//
 	  //Output file is written according to probability distrib.      
 	  //Limits for this keep/reject have been tuned by Rong Wang, Ipno
+	 
 	  if((trk.Process == 0 && xsec>rndm.Rndm()*2)||(trk.Process == 1 && xsec>rndm.Rndm()*800))
 	    {
 	      kr = 1;
 	      counter_kept++;
+	      ptr = ptr = fopen("genepi.dat","a"); 
 	      dump_file(ro->get_fMode(), ro->get_fProc(),xsec,iApZ);
 	    }
 	  else
@@ -1921,11 +1926,11 @@ int main(int argc, char*argv[])
 	  trk.kr = kr;
 
 	}
-      if(ro->get_fNtp())// && trk.kr==1) 
+      /*if(ro->get_fNtp())// && trk.kr==1) 
 	{
 	  tree->Fill();
 	}
-
+      */
       if(trk.Struck_Nucl == 0)
 	{
 	  Nhit_neut++;
@@ -1956,14 +1961,13 @@ int main(int argc, char*argv[])
 	      sprintf(root_file, "%s/ntup_%s_%3.2fgev_%d.root", 
 		      Dir.c_str(), target.c_str(), Ee, ntp_cnt);
 	    }
-	  cout<<"Start Filling ntuple "<<root_file<<endl;
+	    cout<<"Start Filling ntuple "<<root_file<<endl;
 	  //out0<<"Start Filling ntuple"<<endl;
 	  f    = new TFile(root_file,"RECREATE");
 	  tree = new TTree("DVCS", "/dvcs_tree");
 	  init_tree(tree);
 	  //TTree::SetMaxTreeSize(2000000000);
 	}
-
       Xmin    = min(Xmin, xbj);
       Xmax    = max(Xmax, xbj);
       Ymin    = min(Ymin, y);
