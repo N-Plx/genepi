@@ -27,15 +27,15 @@ $(JLIB):
 
 $(EXE): $(CCOBJS)
 	$(CXX) $(CCFLAGS) -o $@ $(CCOBJS) $(FOBJS) $(LIBS)
-	cp $(EXE) ../bin
+	cp $(EXE) ../
 
 .cc.o :
 	@echo Compiling $@
 	@$(CXX) $(CCFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(EXE) $(CCOBJS) ../bin/$(EXE)
+	rm -f $(EXE) $(CCOBJS) ../$(EXE)
 
 cleanall:
-	rm -f $(EXE) $(CCOBJS) ../bin/$(EXE) ../jetset_lib/*.o $(JLIB)
+	rm -f $(EXE) $(CCOBJS) ../$(EXE) ../jetset_lib/*.o $(JLIB)
 
