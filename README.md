@@ -8,9 +8,9 @@ Documentation : https://misportal.jlab.org/ul/Physics/Hall-B/clas/viewFile.cfm/2
 
 Additional features :
 
-> Events are selected with a keep/reject method. This means the output distributions already take into account the cross-sections.
-> NH3/ND3 targets : events are randomly chosen to be on N or H/D. The output for N has a particle with ID 12. This is a trick, a fake ID to make it go through the simulation without interacting but still be able to recognize N events in the simulation output. 
-> Phi meson use the pi0 cross-sections. 
+- Events are selected with a keep/reject method. This means the output distributions already take into account the cross-sections.
+- NH3/ND3 targets : events are randomly chosen to be on N or H/D. The output for N has a particle with ID 12. This is a trick, a fake ID to make it go through the simulation without interacting but still be able to recognize N events in the simulation output. 
+- Phi meson use the pi0 cross-sections. 
 
 How to compile (on ifarm, on a clean environment) :
 > setenv ROOTSYS /apps/root/6.10.02/root
