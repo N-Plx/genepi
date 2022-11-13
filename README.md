@@ -14,8 +14,11 @@ Additional features :
 
 How to compile (on ifarm, on a clean environment) :
 > setenv ROOTSYS /apps/root/6.10.02/root
+> 
 > setenv ROOTLIB /apps/root/6.10.02/root/lib
+> 
 > setenv LD_LIBRARY_PATH ${PATH}:${ROOTSYS}/lib
+>
 > setenv PATH ${PATH}:${ROOTSYS}/bin
 > 
 > make 
@@ -50,5 +53,9 @@ Run genepi :
     --t_max    0       Maximum squared momentum transfer [GeV^2] t=(P−P')^2
     --ycol_min -999    Minimum collider y ycol = (Q2+t)/(Q2+x*t)
     --ycol_max 0.025   Maximum collider y ycol = (Q2+t)/(Q2+x*t) 
-   
+    
+   where 
+   - P,P' are the in/out nucleon 4-momenta
+   - q the virtual photon 4-momentum
+   - k/k' the in/out electron 4-momenta and Ebeam/E' their energies.
    
