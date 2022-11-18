@@ -2,8 +2,8 @@ SUBDIRS = jetset_lib src
 
 all :
 	for dir in $(SUBDIRS); do \
-	make -C $$dir; \
+	$(MAKE) -C $$dir; \
 	done;	
 
 clean : 
-	for dir in $(SUBDIRS); do make -C $$dir clean; done;	
+	for dir in $(SUBDIRS); do $(MAKE) -C $$dir clean; done;	
