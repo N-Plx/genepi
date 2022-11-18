@@ -17,9 +17,9 @@ How to compile (on ifarm, on a clean environment) :
 > 
 > setenv ROOTLIB /apps/root/6.10.02/root/lib
 > 
-> setenv LD_LIBRARY_PATH ${PATH}:${ROOTSYS}/lib
+> setenv LD_LIBRARY_PATH <span>$</span>{PATH}:${ROOTSYS}/lib
 >
-> setenv PATH ${PATH}:${ROOTSYS}/bin
+> setenv PATH <span>$</span>{PATH}:${ROOTSYS}/bin
 > 
 > make 
 
