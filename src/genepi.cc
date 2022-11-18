@@ -493,7 +493,7 @@ int main(int argc, char*argv[])
   ro->set_fYcolmax(ycol_max);
   ro->set_fAscii(1);
   ro->set_fMode(2);
-  ro->set_fMgpd(1);
+  ro->set_fMgpd(gpd_type);
   ro->set_fNevts(num_of_ev);
   ro->set_fBchg(beamcharge);
   ro->set_fBheli(beamheli);
