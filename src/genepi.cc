@@ -7,6 +7,7 @@
   NH3/ND3 targets : NoÅÈmie Pilleux, IJCLab
   Restructuring / kinematic bug-fixes, phi-meson production : Daria Sokhan, CEA Saclay / Glasgow
 */
+#include <cstdlib>
 
 #include "genepi.h"
 #include "inl_funcs.h"
@@ -244,12 +245,18 @@ int main(int argc, char*argv[])
     }
   
   //read GPDs from gpd_table.dat
-  string gpd_tbl=("gpd_table.dat");
-  if(fexist(gpd_tbl.c_str()))
-    {
+  std::string gpd_tbl = "gpd_table.dat";
+  if (std::getenv("GENEPI") != NULL) {
+      std::string absolute_path = std::getenv("GENEPI");
+      absolute_path += "/";
+      absolute_path += gpd_tbl;
+      gpd_tbl = absolute_path;
+  }
+  if (fexist(gpd_tbl.c_str()))
+  {
       cout<<"File "<<gpd_tbl.c_str()<<" does not exist"<<endl;
       return 0;
-    }
+  }
   
   dv->read_gpds(gpd_tbl);
   
