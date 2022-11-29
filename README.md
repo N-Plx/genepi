@@ -1,6 +1,6 @@
 # genepi
 
-GENEPI Monte Carlo event generator.
+GENEPI Monte Carlo event generator. OSG version.
 
 Describing electroproduction of photons and mesons off free and bound nucleons. Processes described : Bethe-Heitler, deeply virtual Compton scattering, pi0/eta production (and their decay to photons).
 
@@ -9,8 +9,7 @@ Documentation : https://misportal.jlab.org/ul/Physics/Hall-B/clas/viewFile.cfm/2
 Additional features :
 
 - Events are selected with a keep/reject method. This means the output distributions already take into account the cross-sections.
-- NH3/ND3 targets : events are randomly chosen to be on N or H/D. The output for N has a particle with ID 12. This is a trick, a fake ID to make it go through the simulation without interacting but still be able to recognize N events in the simulation output. 
-- Phi meson use the pi0 cross-sections. 
+- NH3/ND3 targets : events are randomly chosen to be on N or H/D. The output for N has a particle with ID 12. This is a trick, a fake ID to make it go through the simulation without interacting but still be able to recognize N events in the simulation output.
 
 How to compile (on ifarm, on a clean environment) :
 > setenv ROOTSYS /apps/root/6.10.02/root
@@ -36,7 +35,7 @@ Run genepi :
     --docker   0       is ignored
     --Ebeam    10.6    incident e- momentum [GeV]
     --process  0       0 for DVCS, 1 for meson production.
-    --meson    0       0 for pi0, 1 for eta, 2 for phi
+    --meson    0       0 for pi0, 1 for eta
     --targ_A   1       Number of nucleons in the target
     --targ_Z   1       Number of protons in the target
     --x_min    0.001   Minimum x bjorken
