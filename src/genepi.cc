@@ -411,6 +411,7 @@ int main(int argc, char*argv[])
             if (optarg!=NULL)
               {
                 process=atof(optarg);
+		if(process!=0 && process!=1) {cerr << "invalid process" << endl; return 0;}
               }
             else
               {
@@ -424,6 +425,7 @@ int main(int argc, char*argv[])
             if (optarg!=NULL)
               {
                 meson=atof(optarg);
+		if(meson!=0 && meson!=1) {cerr << "invalid meson ID" << endl; return 0;}
               }
             else
               {
@@ -569,8 +571,12 @@ int main(int argc, char*argv[])
     {
       target = "ND3";
     }
+  else
+    {
+      cerr << "Target is not supported" << endl;
+      return 0;
+    }
   cout << "Your target is " << target << endl;
-  ////out0<<"Target:  "<< target<<endl;
   
   //Needed for root file output
   int ntp_cnt(0);

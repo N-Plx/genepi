@@ -42,17 +42,6 @@ double ms_xsec(ReadOptFile *ro, double x, double Q2, double t, double Phi_g, int
       dd = sqr(2.*delu - deld)/3.;
     }
   }
-  if(ro->get_fIms() == 2) //phi -- copied from pi0!!
-    {
-      if(Ipn == 0) //neutron
-	{
-	  dd = sqr(2.*deld + delu);
-	}
-      else if(Ipn == 1) //proton
-	{
-	  dd = sqr(2.*delu + deld);
-	}
-    }
 
   dmsunp = (25.2*dd*x3*(1. - x))/(sqr(Q2*(Q2 + M_TARG2)))*
             (1. + 2.*ro->get_fBheli()*x*pow((1. - x),5)*sin(Phi_g))*exp((t - tmin));
