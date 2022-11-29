@@ -9,6 +9,7 @@
 */
 
 #include <getopt.h>
+#include <cstdlib>
 #include "genepi.h"
 #include "inl_funcs.h"
 #include "lujets_cc.h"
@@ -592,6 +593,13 @@ int main(int argc, char*argv[])
   //read GPDs from gpd_table.dat
   cout << "Reading GPD table" << endl;
   string gpd_tbl=("gpd_table.dat");
+  if (std::getenv("GENEPI") != NULL) 
+    {
+      string absolute_path = std::getenv("GENEPI");
+      absolute_path += "/";
+      absolute_path += gpd_tbl;
+      gpd_tbl = absolute_path;
+      }
   if(fexist(gpd_tbl.c_str()))
     {
       cout<<"File "<<gpd_tbl.c_str()<<" does not exist"<<endl;
