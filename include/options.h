@@ -109,6 +109,7 @@ bool get_opt(const char* tag, const char* key, T& value)
   string data = get_line_data(tag,key);
   istringstream in(data.c_str());  
   in>>value;
+  cout << tag << " "  <<key << " " << value << endl;
   if(in.good()) return true;
   else return false;
 }

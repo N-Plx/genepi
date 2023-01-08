@@ -111,7 +111,7 @@ FILE *ptr;
 
 int main(int argc, char*argv[])
 {
-  
+
   if(argc != 2)
     {
       cout<<"Error"<<endl;
@@ -191,6 +191,13 @@ int main(int argc, char*argv[])
   
   //Input run number
   int irunnum = ro->get_fRunnum();
+  
+  //Vertex  
+  double vx = ro->get_fVx();
+  double vy = ro->get_fVy();
+  double vz = ro->get_fVz();
+  double raster_x = ro->get_fRasterx();
+  double raster_y = ro->get_fRastery();
   
   //Selecting the target
   string target;
@@ -1561,7 +1568,7 @@ int main(int argc, char*argv[])
 	    {
 	      kr = 1;
 	      counter_kept++;
-	      dump_file(ro->get_fMode(), ro->get_fProc(),xsec,iApZ);
+	      dump_file(ro->get_fMode(), ro->get_fProc(),xsec,iApZ, vx, vy, vz, raster_x, raster_y);
 	    }
 	  else
 	    {

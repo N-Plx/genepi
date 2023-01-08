@@ -44,6 +44,11 @@ private:
   int    fIms;
   int    fIpn;//does not exist in input file
   int    fRunnum;
+  double    fVx;
+  double    fVy;
+  double    fVz;
+  double    fRasterx;
+  double    fRastery;
 
 public:
   int    get_fNevts()   {return fNevts;}
@@ -81,7 +86,12 @@ public:
   int    get_fMgpd()    {return fMgpd;}
   int    get_fIms()     {return fIms;}
   int    get_fIpn()     {return fIpn;}
-  int    get_fRunnum()     {return fRunnum;}
+  int    get_fRunnum()  {return fRunnum;}
+  double    get_fVx()      {return fVx;}
+  double    get_fVy()      {return fVy;}
+  double    get_fVz()      {return fVz;}
+  double    get_fRasterx()      {return fRasterx;}
+  double    get_fRastery()      {return fRastery;}
 
   void set_fXbjmin(double Xbjmin) {fXbjmin = Xbjmin;}
   void set_fXbjmax(double Xbjmax) {fXbjmax = Xbjmax;}

@@ -276,6 +276,16 @@ int ReadOptFile::ReadInputFile(const char* inpfile)
   get_opt("RUN","NUMBER", fRunnum);
   cout<< "Run number: " << fRunnum << endl;
 
+  get_opt("VERTEX","X", fVx);
+  cout<< "Vertex x : " << fVx << endl;
+  get_opt("VERTEX","Y", fVy);
+  cout<< "Vertex y : " << fVy << endl;
+  get_opt("VERTEX","Z", fVz);
+  cout<< "Vertex z : " << fVz << endl;
+  get_opt("RASTER","X", fRasterx);
+  cout<< "Raster x : " << fRasterx << endl;
+  get_opt("RASTER","Y", fRastery);
+  cout<< "Raster y : " << fRastery << endl;
 
   cout<<"------ reading input file : DONE WITH SUCCESS ---------"<<endl;
 
