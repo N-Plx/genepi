@@ -4,7 +4,7 @@
 #include "dump_file.h"
 #include"vertex.h"
 
-void dump_file(int mode, int proc, double xsec, int iApZ)
+void dump_file(int mode, int proc, double xsec, int iApZ, double vx, double vy, double vz, double raster_x, double raster_y)
 {
   if(mode == 0)
     { 
@@ -73,7 +73,7 @@ void dump_file(int mode, int proc, double xsec, int iApZ)
     {
       int index = 1;
       double vtx_x,vtx_y,vtx_z;
-      vertex_xyz(&vtx_x, &vtx_y, &vtx_z);
+      vertex_xyz(&vtx_x, &vtx_y, &vtx_z, vx, vy, vz, raster_x, raster_y);
       if(proc == 0)
 	{
 	  fprintf(ptr,"%d %d %d %d %d %d %lf %d %d %lf\n", hepevt.NHEP-3, 2, 1, 0, 0, 

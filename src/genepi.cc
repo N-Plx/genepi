@@ -133,9 +133,11 @@ int main(int argc, char*argv[])
   double nu_min=0.3,nu_max=11.;
   double t_min = -1.2, t_max = 0.;
   double  ycol_min = -999., ycol_max = 0.025;
+  double vx=0., vy=0., vz=-3.;
+  double raster_x=0., raster_y=0.;
   int x_sec_type = 3, gpd_type = 1; 
   
-  char* short_options = (char*)"a:b:c:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v::";
+  char* short_options = (char*)"a:b:c:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v:w:x:y:z:zz::";
   const struct option long_options[] = {
     {"trig"    ,required_argument,NULL,'a'},//num_of_ev
     {"docker"  ,required_argument,NULL,'b'},
@@ -159,6 +161,11 @@ int main(int argc, char*argv[])
     {"meson"   ,required_argument,NULL,'t'},
     {"targ_A"  ,required_argument,NULL,'u'},
     {"targ_Z"  ,required_argument,NULL,'v'},
+    {"vx"      ,required_argument,NULL,'w'},
+    {"vy"      ,required_argument,NULL,'x'},
+    {"vz"      ,required_argument,NULL,'y'},
+    {"raster_x",required_argument,NULL,'z'},
+    {"raster_y",required_argument,NULL,'zz'},
     {NULL,0,NULL,0}
   };
 
@@ -458,6 +465,71 @@ int main(int argc, char*argv[])
                 cout<<"default value is used and ";
               }
             cout<<"targ_Z is set to "<< targ_Z <<" "<<endl;
+            break;
+          };
+	case 'w':
+          {
+            if (optarg!=NULL)
+              {
+                vx=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"vx is set to "<< vx <<" cm "<<endl;
+            break;
+          };
+	case 'x':
+          {
+            if (optarg!=NULL)
+              {
+                vy=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"vy is set to "<< vy <<" cm "<<endl;
+            break;
+          };
+	case 'y':
+          {
+            if (optarg!=NULL)
+              {
+                vz=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"vz is set to "<< vz <<" cm "<<endl;
+            break;
+          };
+	case 'z':
+          {
+            if (optarg!=NULL)
+              {
+                raster_x=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"raster_x is set to "<< raster_x <<" cm "<<endl;
+            break;
+          };
+	case 'zz':
+          {
+            if (optarg!=NULL)
+              {
+                raster_y=atof(optarg);
+              }
+            else
+              {
+                cout<<"default value is used and ";
+              }
+            cout<<"raster_y is set to "<< raster_y <<" cm "<<endl;
             break;
           };
 	case '?': default:
@@ -1923,14 +1995,14 @@ int main(int argc, char*argv[])
 
 	  //=====================================KEEP REJECT======================================//
 	  //Output file is written according to probability distrib.      
-	  //Limits for this keep/reject have been tuned by Rong Wang, Ipno
-	 
+	  //Limits for this keep/reject have been tuned by Rong Wang, Ipno	 
+
 	  if((trk.Process == 0 && xsec>rndm.Rndm()*2)||(trk.Process == 1 && xsec>rndm.Rndm()*800))
 	    {
 	      kr = 1;
 	      counter_kept++;
 	      ptr = ptr = fopen("genepi.dat","a"); 
-	      dump_file(ro->get_fMode(), ro->get_fProc(),xsec,iApZ);
+	      dump_file(ro->get_fMode(), ro->get_fProc(),xsec,iApZ, vx, vy, vz, raster_x, raster_y);
 	    }
 	  else
 	    {
