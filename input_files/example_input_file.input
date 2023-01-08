@@ -63,3 +63,10 @@ GPD    TYPE   1
 
 // (0: excl. pi0, 1: excl. eta)
 MESON    TYPE   0
+
+//Vertex choice
+VERTEX    X   0.3
+VERTEX    Y   0.
+VERTEX    Z   -3.0
+RASTER    X   0.
+RASTER    Y   0.1
