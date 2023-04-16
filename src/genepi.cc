@@ -137,10 +137,10 @@ int main(int argc, char*argv[])
   double raster_x=0., raster_y=0.;
   int x_sec_type = 3, gpd_type = 1; 
   
-  char* short_options = (char*)"a:b:c:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v:w:x:y:z:zz::";
+  char* short_options = (char*)"a:bc:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v:w:x:y:z:zz::";
   const struct option long_options[] = {
     {"trig"    ,required_argument,NULL,'a'},//num_of_ev
-    {"docker"  ,required_argument,NULL,'b'},
+    {"docker"  ,no_argument,NULL,'b'},
     {"seed"    ,required_argument,NULL,'c'},
     {"x_min"   ,required_argument,NULL,'d'},
     {"x_max"   ,required_argument,NULL,'e'},
@@ -171,11 +171,12 @@ int main(int argc, char*argv[])
 
   int rez;
   int option_index;
-
   cout<<'\n';
 
   while ((rez=getopt_long(argc,argv,short_options,long_options,&option_index))!=-1)
     {
+      //cout << rez << endl;
+      //cout << "!!!!!! "<< optarg << endl;
       switch(rez)
         {
         case 'a':
