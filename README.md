@@ -12,6 +12,9 @@ Additional features :
 - NH3/ND3 targets : events are randomly chosen to be on N or H/D. The output for N has a particle with ID 12. This is a trick, a fake ID to make it go through the simulation without interacting but still be able to recognize N events in the simulation output.
 - Input file also allows to choose the vertex position and raster radius. The events are distributed uniformely inside an ellipse for which you can choose the center (vx, vy, vz) and x/y radiuses (raster x, raster y).
 
+Note that :
+- Input limits given as command-line arguments are used, but the final limits can be a little more tight since they are all re-computed and checked against each other to be consistent, especially when adding Fermi motion to the nucleons in nuclei.
+
 How to compile (on ifarm, on a clean environment) :
 > setenv ROOTSYS /apps/root/6.10.02/root
 > 
