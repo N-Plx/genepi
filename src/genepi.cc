@@ -137,10 +137,10 @@ int main(int argc, char*argv[])
   double raster_x=0., raster_y=0.;
   int x_sec_type = 3, gpd_type = 1; 
   
-  char* short_options = (char*)"a:b:c:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v:w:x:y:z:zz::";
+  char* short_options = (char*)"a:bc:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v:w:x:y:z:zz::";
   const struct option long_options[] = {
     {"trig"    ,required_argument,NULL,'a'},//num_of_ev
-    {"docker"  ,required_argument,NULL,'b'},
+    {"docker"  ,no_argument,NULL,'b'},
     {"seed"    ,required_argument,NULL,'c'},
     {"x_min"   ,required_argument,NULL,'d'},
     {"x_max"   ,required_argument,NULL,'e'},
@@ -171,11 +171,12 @@ int main(int argc, char*argv[])
 
   int rez;
   int option_index;
-
   cout<<'\n';
 
   while ((rez=getopt_long(argc,argv,short_options,long_options,&option_index))!=-1)
     {
+      //cout << rez << endl;
+      //cout << "!!!!!! "<< optarg << endl;
       switch(rez)
         {
         case 'a':
@@ -1698,8 +1699,8 @@ int main(int argc, char*argv[])
       int id_out_ph = 6;
       trk.Ntracks   = 7;
       
-      //DVCS on H : no recoil
-      if(iApZ == 2) 
+      //DVCS on H or n: no recoil
+      if(iApZ == 2 || iApZ == 1) 
 	{
 	  trk.Ntracks = 6;
 	  id_scat_nuc = 4;
@@ -1768,7 +1769,7 @@ int main(int argc, char*argv[])
       trk.Theta[id_virt_ph]   = Thetakq;
       trk.Phi[id_virt_ph]     = Phikq;
     
-      if(iApZ!=2)//if(iApZ_stored!=2)
+      if(iApZ!=2 && iApZ!=1)//if(iApZ_stored!=2)
 	{
 	  //recoil nucleon/nucleus
 	  trk.Type[id_recoil]    = RECO_ID;
@@ -1850,7 +1851,7 @@ int main(int argc, char*argv[])
 	  lujets_cc.K[1][id_scat_el] = elec_id();    //scat. electron
 	  lujets_cc.K[1][id_virt_ph] = phot_id();    //virtual photon
 	  //if(trk.Process != 0 || iApZ_stored!=2) lujets_cc.K[1][4] = RECO_ID;      //recoil proton
-	  if(iApZ!=2) lujets_cc.K[1][4] = RECO_ID;
+	  if(iApZ!=2 && iApZ!=1) lujets_cc.K[1][4] = RECO_ID;
 	  lujets_cc.K[1][id_scat_nuc] = targ_id(Ipn); //scat. proton
 
 	  for(int ii=0; ii<lujets_cc.N; ii++) lujets_cc.K[2][ii] = 0;
@@ -1881,7 +1882,7 @@ int main(int argc, char*argv[])
 	  lujets_cc.P[0][id_scat_el] = vkp.at(0);
 	  lujets_cc.P[0][id_virt_ph] = vq.at(0);
 	  //if(trk.Process != 0 || iApZ_stored!=2)lujets_cc.P[0][4] = vPr.at(0);
-	  if (iApZ != 2) lujets_cc.P[0][4] = vPr.at(0);
+	  if (iApZ != 2 && iApZ !=1) lujets_cc.P[0][4] = vPr.at(0);
 	  lujets_cc.P[0][id_scat_nuc] = vPp.at(0);
 
 	  lujets_cc.P[1][0] = vk.at(1);
@@ -1889,7 +1890,7 @@ int main(int argc, char*argv[])
 	  lujets_cc.P[1][id_scat_el] = vkp.at(1);
 	  lujets_cc.P[1][id_virt_ph] = vq.at(1);
 	  //if(trk.Process != 0 || iApZ_stored!=2) lujets_cc.P[1][4] = vPr.at(1);
-	  if (iApZ != 2) lujets_cc.P[1][4] = vPr.at(1);
+	  if (iApZ != 2 && iApZ !=1) lujets_cc.P[1][4] = vPr.at(1);
 	  lujets_cc.P[1][id_scat_nuc] = vPp.at(1);
 
 	  lujets_cc.P[2][0] = vk.at(2);
@@ -1897,7 +1898,7 @@ int main(int argc, char*argv[])
 	  lujets_cc.P[2][id_scat_el] = vkp.at(2);
 	  lujets_cc.P[2][id_virt_ph] = vq.at(2);
 	  //if(trk.Process != 0 || iApZ_stored!=2)lujets_cc.P[2][4] = vPr.at(2);
-	  if (iApZ != 2) lujets_cc.P[2][4] = vPr.at(2);
+	  if (iApZ != 2 && iApZ !=1) lujets_cc.P[2][4] = vPr.at(2);
 	  lujets_cc.P[2][id_scat_nuc] = vPp.at(2);
 
 	  lujets_cc.P[3][0] = Ee;
@@ -1905,7 +1906,7 @@ int main(int argc, char*argv[])
 	  lujets_cc.P[3][id_scat_el] = Eep;
 	  lujets_cc.P[3][id_virt_ph] = nu;
 	  //if(trk.Process != 0 || iApZ_stored!=2)lujets_cc.P[3][4] = Er;
-	  if (iApZ != 2) lujets_cc.P[3][4] = Er;
+	  if (iApZ != 2 && iApZ !=1) lujets_cc.P[3][4] = Er;
 	  lujets_cc.P[3][id_scat_nuc] = Ep;
 
 	  lujets_cc.P[4][0] = m_elec(1);
@@ -1913,7 +1914,7 @@ int main(int argc, char*argv[])
 	  lujets_cc.P[4][id_scat_el] = m_elec(1);
 	  lujets_cc.P[4][id_virt_ph] = Q2;
 	  //if(trk.Process != 0 || iApZ_stored!=2)lujets_cc.P[4][4] = M_RECO;
-	  if (iApZ != 2) lujets_cc.P[4][4] = M_RECO;
+	  if (iApZ != 2 && iApZ !=1) lujets_cc.P[4][4] = M_RECO;
 	  lujets_cc.P[4][id_scat_nuc] = m_targ(Ipn,1);
 
 	  if(trk.Process == 0)
@@ -1939,7 +1940,7 @@ int main(int argc, char*argv[])
 	  plu[id_targ_nuc]            = targ_ch(Ipn);
 	  plu[id_scat_el]             = elec_ch();
 	  plu[id_virt_ph]             = phot_ch();
-	  if(iApZ!=2) plu[id_recoil]  = RECO_CH;
+	  if(iApZ!=2 && iApZ !=1) plu[id_recoil]  = RECO_CH;
 	  plu[id_scat_nuc]            = targ_ch(Ipn);
 
 	  if(trk.Process == 0)
