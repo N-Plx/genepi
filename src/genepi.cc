@@ -418,7 +418,7 @@ int main(int argc, char*argv[])
             if (optarg!=NULL)
               {
                 process=atof(optarg);
-		if(process!=0 && process!=1) {cerr << "invalid process" << endl; return 0;}
+		if(process!=0 && process!=1) {cerr << "invalid process" << endl; exit(1);}
               }
             else
               {
@@ -432,7 +432,7 @@ int main(int argc, char*argv[])
             if (optarg!=NULL)
               {
                 meson=atof(optarg);
-		if(meson!=0 && meson!=1) {cerr << "invalid meson ID" << endl; return 0;}
+		if(meson!=0 && meson!=1) {cerr << "invalid meson ID" << endl; exit(1);}
               }
             else
               {
@@ -646,7 +646,7 @@ int main(int argc, char*argv[])
   else
     {
       cerr << "Target is not supported" << endl;
-      return 0;
+      exit(1);
     }
   cout << "Your target is " << target << endl;
   
@@ -681,7 +681,7 @@ int main(int argc, char*argv[])
   if(fexist(gpd_tbl.c_str()))
     {
       cout<<"File "<<gpd_tbl.c_str()<<" does not exist"<<endl;
-      return 0;
+      exit(1);
     }
   
   dv->read_gpds(gpd_tbl);
