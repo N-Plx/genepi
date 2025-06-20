@@ -59,8 +59,8 @@ Run genepi :
     --vx       0.      Vertex position x
     --vy       0.      Vertex position y
     --vz       -3.     Vertex position z
-    --raster_x 0.      Raster radius in the x direction
-    --raster_y 0.      Raster radius in the y direction
+    --raster_x 0.      Raster radius in the x direction [cm]
+    --raster_y 0.      Raster radius in the y direction [cm]
     
    where 
    - P,P' are the in/out nucleon 4-momenta
