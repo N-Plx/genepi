@@ -143,9 +143,10 @@ static int int_arg(const char* opt, const char* s)
 static unsigned int seed_arg(const char* s)
 {
   double v = num_arg("seed", s);
-  if(v != floor(v) || v < 1. || v > 4294967295.)
+  // ROOT's TRandom1 only uses 31 bits of the seed: larger values alias to smaller seeds
+  if(v != floor(v) || v < 1. || v > 2147483647.)
     {
-      cerr << "ERROR: --seed must be an integer in [1, 4294967295], got '" << s << "'" << endl;
+      cerr << "ERROR: --seed must be an integer in [1, 2147483647], got '" << s << "'" << endl;
       exit(1);
     }
   return (unsigned int)v;

@@ -37,7 +37,7 @@ Run genepi :
 
     option   default  comment
     --trig     10000   number of output events
-    --seed     auto    seed for random numbers, integer in [1, 4294967295]. If unspecified, a seed is generated
+    --seed     auto    seed for random numbers, integer in [1, 2147483647]. If unspecified, a seed is generated
                        (random device, clock, process id, host name) and printed in the log. Use a unique
                        seed per job (e.g. from the grid job id) for reproducible productions.
     --docker   0       is ignored
