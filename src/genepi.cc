@@ -115,8 +115,13 @@ int main(int argc, char*argv[])
 {
   //Erase previous file
   cout << "Erasing previous file content" << endl;
+  // Open the output file once for the whole run (truncates any previous content).
   ptr = fopen("genepi.dat","w");
-  fclose(ptr);
+  if(ptr == NULL)
+    {
+      cerr << "Cannot open output file genepi.dat" << endl;
+      return 1;
+    }
   
   //INPUT VARIABLES                                   
   //Beam helicity, target helicity, x_sec type, gpd type hard-coded                                                                                                                                              
@@ -2002,7 +2007,6 @@ int main(int argc, char*argv[])
 	    {
 	      kr = 1;
 	      counter_kept++;
-	      ptr = ptr = fopen("genepi.dat","a"); 
 	      dump_file(ro->get_fMode(), ro->get_fProc(),xsec,iApZ, vx, vy, vz, raster_x, raster_y);
 	    }
 	  else
@@ -2158,6 +2162,7 @@ int main(int argc, char*argv[])
   //out0<<"Epmin    = "<<setw(10)<<EPmin <<";    Epmax    = "<<setw(10)<<EPmax <<endl;
   //out0<<endl;
   
+  fclose(ptr);
   return 0;
 }
 
