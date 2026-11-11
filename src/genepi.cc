@@ -656,14 +656,6 @@ int main(int argc, char*argv[])
       }
   }
 
-  // Open the output file once for the whole run (truncates any previous content)
-  ptr = fopen(output_file.c_str(), "w");
-  if(ptr == NULL)
-    {
-      cerr << "ERROR: cannot open output file " << output_file << ": " << strerror(errno) << endl;
-      exit(1);
-    }
-  cout << "Writing events to " << output_file << endl;
 
   //============Handling input file and output location======================//
   
@@ -819,6 +811,17 @@ int main(int argc, char*argv[])
   cout << "Using GPD table " << gpd_tbl << endl;
   
   dv->read_gpds(gpd_tbl);
+
+  // Open the output file once for the whole run (truncates any previous content).
+  // Done only after every input and environment check (incl. the GPD table), so that
+  // a failing job does not wipe an existing output file.
+  ptr = fopen(output_file.c_str(), "w");
+  if(ptr == NULL)
+    {
+      cerr << "ERROR: cannot open output file " << output_file << ": " << strerror(errno) << endl;
+      exit(1);
+    }
+  cout << "Writing events to " << output_file << endl;
   
   //Kinematic variables initialization
   cout << "Initialization" << endl;
