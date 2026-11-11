@@ -226,14 +226,15 @@ int DVCS::eval_cffs(ReadOptFile *ro, NuclFF *ff, double skew, double t)
     }
   else if(Ipn == 0)
     {
-      Re_H  = (4./9.)*(F1d/2.)*Re_Hd + (1./9.)*F1u*Re_Hu;
-      Im_H  = (4./9.)*(F1d/2.)*Im_Hd + (1./9.)*F1u*Im_Hu;
+      // Isospin mirror of the proton: H_u^n = H_d^p (norm. F1d), H_d^n = H_u^p (norm. F1u/2)
+      Re_H  = (4./9.)*F1d*Re_Hd + (1./9.)*(F1u/2.)*Re_Hu;
+      Im_H  = (4./9.)*F1d*Im_Hd + (1./9.)*(F1u/2.)*Im_Hu;
       
       Re_Ht = (4./9.)*gAd*Re_Htd     + (1./9.)*gAu*Re_Htu;
       Im_Ht = (4./9.)*gAd*Im_Htd     + (1./9.)*gAu*Im_Htu;
       
-      Re_E  = (4./9.)*(F2d/2.)*Re_Ed + (1./9.)*F2u*Re_Eu;
-      Im_E  = (4./9.)*(F2d/2.)*Im_Ed + (1./9.)*F2u*Im_Eu;
+      Re_E  = (4./9.)*F2d*Re_Ed + (1./9.)*(F2u/2.)*Re_Eu;
+      Im_E  = (4./9.)*F2d*Im_Ed + (1./9.)*(F2u/2.)*Im_Eu;
       
       Re_Et = (4./9.)*Fpi*Re_Etd     + (1./9.)*Fpi*Re_Etu;
       Im_Et = (4./9.)*Fpi*Im_Etd     + (1./9.)*Fpi*Im_Etu;
