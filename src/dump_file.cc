@@ -71,12 +71,20 @@ void dump_file(int mode, int proc, double xsec, int iApZ, double vx, double vy, 
     }
   else if(mode == 2)
     {
+      // LUND header target A and Z: the nucleus actually hit in this event
+      // (iApZ is set per event, e.g. H or N for NH3, D or N for ND3).
+      int targA = 1, targZ = 1;
+      if(iApZ == 1)       { targA = 1;  targZ = 0; } // free neutron
+      else if(iApZ == 2)  { targA = 1;  targZ = 1; } // proton
+      else if(iApZ == 3)  { targA = 2;  targZ = 1; } // deuteron
+      else if(iApZ == 8)  { targA = 4;  targZ = 2; } // He4
+      else if(iApZ == 21) { targA = 14; targZ = 7; } // N14
       int index = 1;
       double vtx_x,vtx_y,vtx_z;
       vertex_xyz(&vtx_x, &vtx_y, &vtx_z, vx, vy, vz, raster_x, raster_y);
       if(proc == 0)
 	{
-	  fprintf(ptr,"%d %d %d %d %d %d %lf %d %d %lf\n", hepevt.NHEP-3, 2, 1, 0, 0, 
+	  fprintf(ptr,"%d %d %d %d %d %d %lf %d %d %lf\n", hepevt.NHEP-3, targA, targZ, 0, 0, 
 		  11, hepevt.PHEP[0][3], hepevt.IDHEP[1], proc, xsec);
 	  for(int i=2; i<hepevt.NHEP; i++)
 	    {
@@ -95,7 +103,7 @@ void dump_file(int mode, int proc, double xsec, int iApZ, double vx, double vy, 
 	}
       else if(proc == 1)
 	{
-	  fprintf(ptr,"%d %d %d %d %d %d %lf %d %d %lf\n", hepevt.NHEP-3-1, 2, 1, 0, 0, 
+	  fprintf(ptr,"%d %d %d %d %d %d %lf %d %d %lf\n", hepevt.NHEP-3-1, targA, targZ, 0, 0, 
 		  11, hepevt.PHEP[0][3], hepevt.IDHEP[1], proc, xsec);
 	  for(int i=2; i<hepevt.NHEP; i++)
 	    {

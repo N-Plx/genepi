@@ -9,7 +9,9 @@ Documentation : https://misportal.jlab.org/ul/Physics/Hall-B/clas/viewFile.cfm/2
 Additional features :
 
 - Events are selected with a keep/reject method. This means the output distributions already take into account the cross-sections.
-- NH3/ND3 targets : events are randomly chosen to be on N or H/D. The output for N has a particle with ID 12. This is a trick, a fake ID to make it go through the simulation without interacting but still be able to recognize N events in the simulation output.
+- NH3/ND3 targets : events are randomly chosen to be on N or H/D. The output for N has a particle with ID 12. This is a trick, a fake ID to make it go through the simulation without interacting but still be able to recognize N events in the simulation output (gemc cannot track a generic C13/N13 ion from a LUND file: the real PDG code makes it exit).
+- The LUND header target A and Z (columns 2-3, MC::Event atarget/ztarget in gemc output) are those of the nucleus actually hit in each event: 1/1 for H, 2/1 for D, 4/2 for He4, 14/7 for N, 1/0 for a free neutron.
+- He4 targets : the spectator system is written with its real PDG code, He3 (1000020030) or triton (1000010030), which gemc tracks (MC::Particle pid 49/46).
 - Input file also allows to choose the vertex position and raster radius. The events are distributed uniformely inside an ellipse for which you can choose the center (vx, vy, vz) and x/y radiuses (raster x, raster y).
 
 Note that :

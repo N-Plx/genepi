@@ -58,13 +58,14 @@ int inline phi_id();
 int inline phi_id() {return 333;}
 
 int inline hel3_id();
-int inline hel3_id() {return 1234;}//FAKE
+int inline hel3_id() {return 1000020030;}// He3 (PDG ion code, known to Geant4/gemc: MC::Particle pid 49)
 
 int inline trit_id();
-int inline trit_id() {return 4321;}//FAKE
+int inline trit_id() {return 1000010030;}// triton (PDG ion code, known to Geant4/gemc: MC::Particle pid 46)
 
 int inline remnant_id(); 
-int inline remnant_id() {return 12;}//id of a neutrino
+int inline remnant_id() {return 12;}// N14 remnant (C13/N13) written as a nu_e: gemc has no generic ions
+// in its LUND reader, a neutrino keeps the remnant in MC::Particle without interacting
 
 int inline neut_ch();
 int inline neut_ch() {return 0;}
