@@ -15,15 +15,17 @@ double nitro_fermi_dist(double x)
   return (n0+n1)*xx; 
 } 
 
-double fer_mom_nitro(TRandom1 randN) 
+// The generator is taken by reference so that the caller's random stream advances.
+double fer_mom_nitro(TRandom1& randN) 
 {   
   const double fmax = 1.10522;
   const double xmin = 0.; 
   const double xmax = 4/5.07;
-  const double x = randN.Uniform(xmin, xmax);
-  const double fx_test = randN.Uniform(0,fmax);
-  const double fx = nitro_fermi_dist(x);
-  if(fx_test > fx) return fer_mom_nitro(randN);  
-  return x; 
+  while(true)
+    {
+      const double x = randN.Uniform(xmin, xmax);
+      const double fx_test = randN.Uniform(0,fmax);
+      if(fx_test <= nitro_fermi_dist(x)) return x;
+    }
 }
 
