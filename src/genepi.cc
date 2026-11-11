@@ -1523,7 +1523,7 @@ int main(int argc, char*argv[])
             }
 	  
 	  if (trk.Process != 1) qp = nup;     // DVCS, assumes produced particle is a photon
-	  else if (trk.Process == 1) qp = (nup*nup - m_ms(Ims,2));   // produced particle is a meson
+	  else if (trk.Process == 1) qp = sqrt(max(0., nup*nup - m_ms(Ims,2)));   // produced particle is a meson: |p| = sqrt(E^2 - m^2)
 	  
 	  // The fmotion routine assumes that the initial and scattered nucleons are the same. This is easy to change -- you need to edit only the lines which calculate the scattered (recoil) nucleon energy at the end of the routine (two lines there, search for M_TARG).
 	  Pp = sqrt(sqr(Ep) - M_scat2);            // Scattered nucleon might not be the same as the target one!
