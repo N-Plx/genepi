@@ -11,6 +11,7 @@
 #include <getopt.h>
 #include <cstdlib>
 #include "genepi.h"
+#include <cerrno>
 #include "inl_funcs.h"
 #include "lujets_cc.h"
 #include "jetset.h"
@@ -111,6 +112,46 @@ TRACK trk;
 char fdump[1000];
 FILE *ptr;
 
+// ---- Strict parsing of option values: the whole string must be a valid number ----
+// (atof silently turned garbage into 0, e.g. --Ebeam abc ran with Ebeam = 0)
+static double num_arg(const char* opt, const char* s)
+{
+  char* end = NULL;
+  errno = 0;
+  double v = (s != NULL) ? strtod(s, &end) : 0.;
+  if(s == NULL || end == s || *end != '\0' || errno == ERANGE || !std::isfinite(v))
+    {
+      cerr << "ERROR: invalid value '" << (s != NULL ? s : "") << "' for option --" << opt << endl;
+      exit(1);
+    }
+  return v;
+}
+
+static int int_arg(const char* opt, const char* s)
+{
+  double v = num_arg(opt, s);
+  if(v != floor(v) || fabs(v) > 2147483647.)
+    {
+      cerr << "ERROR: option --" << opt << " expects an integer, got '" << s << "'" << endl;
+      exit(1);
+    }
+  return (int)v;
+}
+
+static unsigned int seed_arg(const char* s)
+{
+  double v = num_arg("seed", s);
+  if(v != floor(v) || v < 1. || v > 4294967295.)
+    {
+      cerr << "ERROR: --seed must be an integer in [1, 4294967295], got '" << s << "'" << endl;
+      exit(1);
+    }
+  return (unsigned int)v;
+}
+
+// Long-option code for --raster_y (was the multi-character constant 'zz')
+const int OPT_RASTER_Y = 1000;
+
 int main(int argc, char*argv[])
 {
   //Erase previous file
@@ -143,7 +184,7 @@ int main(int argc, char*argv[])
   double raster_x=0., raster_y=0.;
   int x_sec_type = 3, gpd_type = 1; 
   
-  char* short_options = (char*)"a:bc:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v:w:x:y:z:zz::";
+  char* short_options = (char*)"a:bc:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v:w:x:y:z:";
   const struct option long_options[] = {
     {"trig"    ,required_argument,NULL,'a'},//num_of_ev
     {"docker"  ,no_argument,NULL,'b'},
@@ -171,7 +212,7 @@ int main(int argc, char*argv[])
     {"vy"      ,required_argument,NULL,'x'},
     {"vz"      ,required_argument,NULL,'y'},
     {"raster_x",required_argument,NULL,'z'},
-    {"raster_y",required_argument,NULL,'zz'},
+    {"raster_y",required_argument,NULL,OPT_RASTER_Y},
     {NULL,0,NULL,0}
   };
 
@@ -190,7 +231,7 @@ int main(int argc, char*argv[])
             if (optarg!=NULL)
               {
                 cout<<"Number of events "<<optarg<<endl;
-                num_of_ev=atof(optarg);
+                num_of_ev=int_arg("trig", optarg);
               }
             else
               {
@@ -210,7 +251,7 @@ int main(int argc, char*argv[])
             if (optarg!=NULL)
               {
                 cout<<"seed is set to "<<optarg<<" "<<endl;
-                seed=strtoul(optarg, NULL, 10);
+                seed=seed_arg(optarg);
               }
             else
               {
@@ -223,7 +264,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                x_min=atof(optarg);
+                x_min=num_arg("x_min", optarg);
               }
             else
               {
@@ -236,7 +277,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                x_max=atof(optarg);
+                x_max=num_arg("x_max", optarg);
               }
             else
               {
@@ -250,7 +291,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                y_min=atof(optarg);
+                y_min=num_arg("y_min", optarg);
               }
             else
               {
@@ -263,7 +304,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                y_max=atof(optarg);
+                y_max=num_arg("y_max", optarg);
               }
             else
               {
@@ -277,7 +318,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                Q2_min=atof(optarg);
+                Q2_min=num_arg("Q2_min", optarg);
               }
             else
               {
@@ -290,7 +331,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                Q2_max=atof(optarg);
+                Q2_max=num_arg("Q2_max", optarg);
               }
             else
               {
@@ -303,7 +344,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                W2_min=atof(optarg);
+                W2_min=num_arg("W2_min", optarg);
               }
             else
               {
@@ -317,7 +358,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                W2_max=atof(optarg);
+                W2_max=num_arg("W2_max", optarg);
               }
             else
               {
@@ -330,7 +371,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                nu_min=atof(optarg);
+                nu_min=num_arg("nu_min", optarg);
               }
             else
               {
@@ -343,7 +384,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
 	      {
-                nu_max=atof(optarg);
+                nu_max=num_arg("nu_max", optarg);
               }
             else
               {
@@ -357,7 +398,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                t_min=atof(optarg);
+                t_min=num_arg("t_min", optarg);
               }
             else
               {
@@ -370,7 +411,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                t_max=atof(optarg);
+                t_max=num_arg("t_max", optarg);
               }
             else
               {
@@ -384,7 +425,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                ycol_min=atof(optarg);
+                ycol_min=num_arg("ycol_min", optarg);
               }
             else
               {
@@ -397,7 +438,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                ycol_max=atof(optarg);
+                ycol_max=num_arg("ycol_max", optarg);
               }
             else
               {
@@ -411,7 +452,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                Ebeam=atof(optarg);
+                Ebeam=num_arg("Ebeam", optarg);
               }
             else
               {
@@ -424,7 +465,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                process=atof(optarg);
+                process=int_arg("process", optarg);
 		if(process!=0 && process!=1) {cerr << "invalid process" << endl; exit(1);}
               }
             else
@@ -438,7 +479,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                meson=atof(optarg);
+                meson=int_arg("meson", optarg);
 		if(meson!=0 && meson!=1) {cerr << "invalid meson ID" << endl; exit(1);}
               }
             else
@@ -452,7 +493,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                targ_A=atof(optarg);
+                targ_A=int_arg("targ_A", optarg);
               }
             else
               {
@@ -465,7 +506,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                targ_Z=atof(optarg);
+                targ_Z=int_arg("targ_Z", optarg);
               }
             else
               {
@@ -478,7 +519,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                vx=atof(optarg);
+                vx=num_arg("vx", optarg);
               }
             else
               {
@@ -491,7 +532,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                vy=atof(optarg);
+                vy=num_arg("vy", optarg);
               }
             else
               {
@@ -504,7 +545,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                vz=atof(optarg);
+                vz=num_arg("vz", optarg);
               }
             else
               {
@@ -517,7 +558,7 @@ int main(int argc, char*argv[])
           {
             if (optarg!=NULL)
               {
-                raster_x=atof(optarg);
+                raster_x=num_arg("raster_x", optarg);
               }
             else
               {
@@ -526,11 +567,11 @@ int main(int argc, char*argv[])
             cout<<"raster_x is set to "<< raster_x <<" cm "<<endl;
             break;
           };
-	case 'zz':
+	case OPT_RASTER_Y:
           {
             if (optarg!=NULL)
               {
-                raster_y=atof(optarg);
+                raster_y=num_arg("raster_y", optarg);
               }
             else
               {
@@ -541,11 +582,48 @@ int main(int argc, char*argv[])
           };
 	case '?': default:
           {
-            cout << "found unknown option\n" << endl;
-            break;
+            // unknown option or missing value (getopt already printed which one)
+            cerr << "ERROR: invalid command line; see README.md for the list of options" << endl;
+            exit(1);
           };
         };
     };
+  if(optind < argc)
+    {
+      cerr << "ERROR: unexpected argument '" << argv[optind] << "' (options must be given as --name value)" << endl;
+      exit(1);
+    }
+
+  //============Check the consistency of the inputs======================//
+  {
+    int nerr = 0;
+    auto fail = [&nerr](const string& msg) { cerr << "ERROR: " << msg << endl; nerr++; };
+    auto check_range = [&fail](const char* name, double lo, double hi) {
+      if(!(lo < hi)) fail(string(name) + "_min (" + to_string(lo) + ") must be smaller than " + name + "_max (" + to_string(hi) + ")");
+    };
+    if(num_of_ev < 1)               fail("--trig must be at least 1");
+    if(Ebeam <= 0.)                 fail("--Ebeam must be positive");
+    check_range("x", x_min, x_max);
+    check_range("y", y_min, y_max);
+    check_range("Q2", Q2_min, Q2_max);
+    check_range("W2", W2_min, W2_max);
+    check_range("nu", nu_min, nu_max);
+    check_range("t", t_min, t_max);
+    check_range("ycol", ycol_min, ycol_max);
+    if(x_min <= 0. || x_max > 1.)   fail("x_B range must be within (0, 1]");
+    if(y_min <= 0. || y_max > 1.)   fail("y range must be within (0, 1]");
+    if(Q2_min <= 0.)                fail("--Q2_min must be positive");
+    if(W2_min < 0.)                 fail("--W2_min must be >= 0");
+    if(nu_min < 0.)                 fail("--nu_min must be >= 0");
+    if(t_max > 0.)                  fail("--t_max must be <= 0 (t is negative)");
+    if(raster_x < 0. || raster_y < 0.) fail("raster radii must be >= 0");
+    if(targ_A < 1 || targ_Z < 0 || targ_Z > targ_A) fail("invalid target: need targ_A >= 1 and 0 <= targ_Z <= targ_A");
+    if(nerr > 0)
+      {
+        cerr << nerr << " invalid input(s), stopping." << endl;
+        exit(1);
+      }
+  }
 
   //============Handling input file and output location======================//
   
