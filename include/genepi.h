@@ -16,7 +16,8 @@ double get_ycol(double, double, double);
 void   get_matr(double, double, double matr[3][3]);
 void   dump_file(int, int, double, int, double, double, double, double, double);
 //void   dump_file(int, double, FILE*);
-int    get_seed();
+unsigned int get_seed();
+void   seed_jetset(unsigned int);
 string get_date();
 void   prod_dir(string);
 

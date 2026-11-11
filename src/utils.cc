@@ -1,5 +1,9 @@
 #include "genepi.h"
 #include "inl_funcs.h"
+#include <random>
+#include <chrono>
+#include <functional>
+#include <unistd.h>
 
 int sign(int x)
 {
@@ -141,20 +145,22 @@ string get_date()
 }
 
 
-int get_seed()
+// Default seed when --seed is not given. The previous time-of-day seed (HHMMSS)
+// gave identical events for jobs started in the same second, e.g. on a grid.
+// Mix std::random_device, the high-resolution clock, the process id and the host
+// name instead. Result in [1, 900000000] (also a valid JETSET seed).
+unsigned int get_seed()
 {
-  time_t rawtime;
-  struct tm * timeinfo;
-  char buffer[100];
-
-  time (&rawtime);
-  timeinfo = localtime (&rawtime);
-  strftime(buffer,8,"%H%M%S",timeinfo);
-
-  string str = to_str(buffer);
-  int iseed  = atoi(str.c_str());
-
-  return iseed;
+  const unsigned long long k = 0x9E3779B97F4A7C15ULL;
+  std::random_device rd;
+  unsigned long long h = rd();
+  h = h*k ^ (unsigned long long)std::chrono::high_resolution_clock::now().time_since_epoch().count();
+  h = h*k ^ (unsigned long long)getpid();
+  char host[256] = {0};
+  gethostname(host, sizeof(host) - 1);
+  h = h*k ^ (unsigned long long)std::hash<std::string>()(std::string(host));
+  h ^= h >> 31;
+  return (unsigned int)(h % 900000000ULL) + 1;
 }
 
 

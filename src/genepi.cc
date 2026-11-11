@@ -126,7 +126,8 @@ int main(int argc, char*argv[])
   //INPUT VARIABLES                                   
   //Beam helicity, target helicity, x_sec type, gpd type hard-coded                                                                                                                                              
   //All other options can be chosen via command line
-  int num_of_ev = 10000, seed;
+  int num_of_ev = 10000;
+  unsigned int seed = 0;
   bool seed_spec = 0;
   double Ebeam = 10.6, beamcharge = -1, beamheli = 0; 
   int targ_A = 1, targ_Z = 1, targ_heli = 0;
@@ -209,7 +210,7 @@ int main(int argc, char*argv[])
             if (optarg!=NULL)
               {
                 cout<<"seed is set to "<<optarg<<" "<<endl;
-                seed=atof(optarg);
+                seed=strtoul(optarg, NULL, 10);
               }
             else
               {
@@ -593,14 +594,16 @@ int main(int argc, char*argv[])
   //If no seed was specified, get one from the current time
   if(!seed_spec)
     {
-      cout << "Time seed" << endl;
       seed = get_seed();
+      cout << "No --seed given: using generated seed " << seed << endl;
     }
+  cout << "Random seed used: " << seed << " (rerun with --seed " << seed << " to reproduce)" << endl;
 
   //=================Seed for generation of kin variables=========================//
   TRandom1 rndm;           // changed from the original TRandom1, which is very slow, to TRandom3 
   rndm.SetSeed(seed);
   gRandom->SetSeed(seed);
+  seed_jetset(seed);   // JETSET (meson decays) was never seeded: same stream in every job
   
   double rndmt;           // for generating t later on
 

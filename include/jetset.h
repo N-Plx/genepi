@@ -14,6 +14,13 @@ typedef struct ludat1{
 };
 extern "C" ludat1 ludat1_;
 
+// JETSET random number generator state (RLU): MRLU(1) is the seed, MRLU(2)=0 forces re-initialisation
+typedef struct ludatr{
+  int   mrlu[6];
+  float rrlu[100];
+};
+extern "C" ludatr ludatr_;
+
 extern "C" void luexec_();
 extern "C" void lulist_(int&);
 extern "C" void lu1ent_(int&,int&,float&,float&,float&);

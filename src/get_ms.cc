@@ -96,3 +96,12 @@ int get_ms(ReadOptFile *ro, double x, double Q2, double nu, double Ems, double t
 
   return 0;
 }
+
+// Seed JETSET's random number generator (used for the meson decays).
+// JETSET accepts seeds in [0, 900000000]; setting MRLU(2)=0 makes RLU
+// re-initialise its state from MRLU(1) at the next call.
+void seed_jetset(unsigned int seed)
+{
+  ludatr_.mrlu[0] = (int)(seed % 900000000U);
+  ludatr_.mrlu[1] = 0;
+}
