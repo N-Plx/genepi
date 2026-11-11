@@ -373,7 +373,7 @@ int DVCS::dvcs_xsec(ReadOptFile *ro, double x, double y, double Q2, double t, do
   double HHconj            = sqr(Re_H)       + sqr(Im_H);    //HH*
   double EEconj            = sqr(Re_E)       + sqr(Im_E);    //EE*
   double HtHtconj          = sqr(Re_Ht)      + sqr(Im_Ht);   //H~H~*
-  double EtEtconj          = sqr(Re_Ht)      + sqr(Im_Et);   //E~E~*
+  double EtEtconj          = sqr(Re_Et)      + sqr(Im_Et);   //E~E~*
   double HEconjpEHconj     = 2.*(Re_H*Re_E   + Im_H*Im_E);   //HE* + EH*
   double HtEtconjpEtHtconj = 2.*(Re_Ht*Re_Et + Im_Ht*Im_Et); //H~E~* + E~H~*
   double HHtconjpHtHconj   = 2.*(Re_H*Re_Ht  + Im_H*Im_Ht);  //HH~* + H~H*  
