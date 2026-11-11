@@ -1217,8 +1217,8 @@ int main(int argc, char*argv[])
 	  else if (fabs(test2 - Q2) < fabs(test1 - Q2)) nu = numinus;
 	  else 
 	    {
-	      cout << "Ambiguous calculation of nu. Aborting event." << endl;
-	      cout << fabs(test1 - Q2) << ", " << fabs(test2 - Q2) << endl;
+	      if(++n_reject_msg <= 20)
+		cout << "Ambiguous calculation of nu. Aborting event. " << fabs(test1 - Q2) << ", " << fabs(test2 - Q2) << endl;
 	      outside_klim++;
               outside_klim_nu++;
               dv->init_dvcs();
@@ -1371,7 +1371,7 @@ int main(int argc, char*argv[])
       cosThetakkp = (k*k - Ee*nu - Q2/2.) / (k*sqrt(k*k + nu*nu - 2.*Ee*nu));
       if(abs(cosThetakkp) > 1.)
 	{
-	  cout<<"event "<<ievt<<
+	  if(++n_reject_msg <= 20) cout<<"event "<<ievt<<
 	    "; cosThetakkp larger than one; cosThetakkp = "<<cosThetakkp<< endl;
 	  cosThetakkp = sign(cosThetakkp);
 	}
@@ -1594,14 +1594,14 @@ int main(int argc, char*argv[])
           
           if(abs(cosThetaqqp) >= 1.)
             {
-              cout<<"event "<<ievt<<
+              if(++n_reject_msg <= 20) cout<<"event "<<ievt<<
 		"; cosThetaqqp larger than one; cosThetaqqp = "<<cosThetaqqp<< endl;
               cosThetaqqp = sign(cosThetaqqp);
             }
           
           Thetaqqp =  acos(cosThetaqqp);//[0,PI]
           
-          if(Thetaqqp > pi(1))
+          if(Thetaqqp > pi(1) && ++n_reject_msg <= 20)
             cout<<"Thetaqqp larger than pi; cosThetaqqp = "<<cosThetaqqp<< endl;
           
           //generate produced particle azimuthal angle wrt virt. phot. frame
@@ -1856,7 +1856,7 @@ int main(int argc, char*argv[])
 	  
 	  if(get_ms(ro, xbj, Q2, nu, nup, t, Phikkp, Phiqqp) != 0)
 	    {
-	      cout<<"event "<<ievt<<"; Error in xsec calculation. "<<endl;
+	      if(++n_reject_msg <= 20) cout<<"event "<<ievt<<"; Error in xsec calculation. "<<endl;
 	      //out0<<"event "<<ievt<<"; Error in xsec calculation. "<<endl;
 	      
 	      outside_klim++;
@@ -2370,7 +2370,7 @@ int main(int argc, char*argv[])
   
   cout<<"Number of trials   "<< n_trials <<endl;
   if(n_reject_msg > 20)
-    cout<<"(" << n_reject_msg - 20 << " further out-of-range messages not printed)"<<endl;
+    cout<<"(" << n_reject_msg - 20 << " further per-trial messages not printed)"<<endl;
   // A full disk or I/O error during writing must not look like a successful job
   bool write_error = ferror(ptr) != 0;
   if(fclose(ptr) != 0) write_error = true;
