@@ -29,7 +29,8 @@ C...Stop program if this routine is ever called.
 C...You should not copy these lines to your own routine. 
       NDECAY=ITAU+IORIG+KFORIG      
       WRITE(MSTU(11),5000) 
-      IF(RLU(0).LT.10.) STOP 
+C...GENEPI: non-zero exit status 
+      IF(RLU(0).LT.10.) STOP 1 
  
 C...Format for error printout. 
  5000 FORMAT(1X,'Error: you did not link your LUTAUD routine ', 

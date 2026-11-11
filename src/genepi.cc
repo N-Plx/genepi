@@ -2309,7 +2309,14 @@ int main(int argc, char*argv[])
   cout<<"Number of trials   "<< n_trials <<endl;
   if(n_reject_msg > 20)
     cout<<"(" << n_reject_msg - 20 << " further out-of-range messages not printed)"<<endl;
-  fclose(ptr);
+  // A full disk or I/O error during writing must not look like a successful job
+  bool write_error = ferror(ptr) != 0;
+  if(fclose(ptr) != 0) write_error = true;
+  if(write_error)
+    {
+      cerr << "ERROR: writing the output file failed (disk full or I/O error)" << endl;
+      if(exit_code == 0) exit_code = 4;
+    }
   return exit_code;
 }
 

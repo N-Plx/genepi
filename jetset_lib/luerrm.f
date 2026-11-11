@@ -26,13 +26,15 @@ C...Write first few errors, then be silent or stop program.
           WRITE(MSTU(11),5100) MERR-10,MSTU(31),CHMESS 
           WRITE(MSTU(11),5200) 
           IF(MERR.NE.17) CALL LULIST(2) 
-          STOP 
+C...GENEPI: non-zero exit status, so that batch/grid jobs see the failure 
+          STOP 1 
         ENDIF 
  
 C...Stop program in case of irreparable error. 
       ELSE 
         WRITE(MSTU(11),5300) MERR-20,MSTU(31),CHMESS 
-        STOP 
+C...GENEPI: non-zero exit status, so that batch/grid jobs see the failure 
+        STOP 1 
       ENDIF 
  
 C...Formats for output. 
