@@ -18,7 +18,9 @@ double nitro_fermi_dist(double x)
 // The generator is taken by reference so that the caller's random stream advances.
 double fer_mom_nitro(TRandom1& randN) 
 {   
-  const double fmax = 1.10522;
+  // Envelope of the accept-reject: must be >= max of nitro_fermi_dist, which is
+  // 1.1854 at p = 0.152 GeV (1.10522 clipped the peak, 129-175 MeV/c, by 1.24%)
+  const double fmax = 1.19;
   const double xmin = 0.; 
   const double xmax = 4/5.07;
   while(true)
