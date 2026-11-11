@@ -128,7 +128,8 @@ int DVCS::eval_cffs(ReadOptFile *ro, NuclFF *ff, double skew, double t)
   double M_TARG2(m_targ(Ipn,2.));
 
   //skewmin = 0.01; skewmin = 1.0
-  dsk  = (log10(1.00) - log10(0.01))/MAXSK;
+  // MAXSK points span [0.01, 1.0] inclusive, i.e. MAXSK-1 intervals
+  dsk  = (log10(1.00) - log10(0.01))/(MAXSK-1);
   sk   = (log10(skew) - log10(0.01))/dsk;
   isk  = (int)sk;
   skD  = sk - (double)isk;
