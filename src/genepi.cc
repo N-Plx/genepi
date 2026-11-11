@@ -907,9 +907,11 @@ int main(int argc, char*argv[])
   //=====================Start event loop===================//
   cout << "Start event loop" << endl;
   long long ievt = 0;
-  // Protection against endless loops: no accepted event after MAX_TRIALS_NO_EVENT
-  // trials means the requested phase space is (nearly) empty -> stop with an error.
-  const long long MAX_TRIALS_NO_EVENT = 1000000;
+  // Protection against endless loops: no accepted event after no_event_limit trials
+  // means the requested phase space is (nearly) empty -> stop with an error.
+  // Default 1e7 trials (~1 min); --max_trials overrides it for very narrow cuts.
+  const long long MAX_TRIALS_NO_EVENT = 10000000;
+  const long long no_event_limit = (max_trials > 0.) ? (long long)max_trials : MAX_TRIALS_NO_EVENT;
   long long n_trials = 0;
   long long n_reject_msg = 0;   // rejection messages printed (capped, they used to flood stdout)
   int exit_code = 0;
@@ -919,21 +921,22 @@ int main(int argc, char*argv[])
   //for(long long ievt=0; ievt<ro->get_fNevts(); ievt++)
   while(counter_kept<ro->get_fNevts())  
     {
-      n_trials++;
-      if(counter_kept == 0 && n_trials > MAX_TRIALS_NO_EVENT)
+      // limits are checked before the trial, so n_trials is the number of trials actually done
+      if(counter_kept == 0 && n_trials >= no_event_limit)
 	{
-	  cerr << "ERROR: no event accepted after " << MAX_TRIALS_NO_EVENT << " trials: the requested "
+	  cerr << "ERROR: no event accepted after " << no_event_limit << " trials (use --max_trials to allow more): the requested "
 	       << "kinematic range is empty or nearly empty for this beam energy and target. Stopping." << endl;
 	  exit_code = 2;
 	  break;
 	}
-      if(max_trials > 0. && n_trials > max_trials)
+      if(max_trials > 0. && n_trials >= (long long)max_trials)
 	{
 	  cerr << "WARNING: --max_trials " << (long long)max_trials << " reached with " << counter_kept
 	       << " of " << ro->get_fNevts() << " events kept. Stopping." << endl;
 	  exit_code = 3;
 	  break;
 	}
+      n_trials++;
       ievt++;
       //Get event info from input
       trk.Evt_ID  = ievt;

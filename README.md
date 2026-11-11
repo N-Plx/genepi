@@ -66,7 +66,8 @@ Run genepi :
     --raster_x 0.      Raster radius in the x direction [cm]
     --raster_y 0.      Raster radius in the y direction [cm]
     --output   genepi.dat  Output file (LUND format)
-    --max_trials 0     Stop after this many trials (0 = no limit); the events kept so far are written
+    --max_trials 0     Stop after this many trials (0 = no limit); the events kept so far are written.
+                       Also replaces the default limit of 10,000,000 trials without any accepted event.
     
    where 
    - P,P' are the in/out nucleon 4-momenta
@@ -74,8 +75,8 @@ Run genepi :
    - k/k' the in/out electron 4-momenta and Ebeam/E' their energies.
 
 Invalid or inconsistent options (unknown option, non-numeric value, min >= max, ...) stop the program
-with an error message. If no event is accepted after 1,000,000 trials, the requested phase space is
-considered empty and the program stops.
+with an error message. If no event is accepted after 10,000,000 trials (or --max_trials, if given), the
+requested phase space is considered empty and the program stops (exit status 2).
 
 The GPD table gpd_table.dat is read from $GENEPI if this variable is set, otherwise from the directory
 of the executable, then from the current directory.
@@ -85,6 +86,6 @@ Exit status:
     0  success
     1  invalid input, missing GPD table, cannot open the output, or fatal JETSET error
     2  no event accepted (empty phase space)
-    3  --max_trials reached before --trig events were kept
+    3  --max_trials reached after some, but fewer than --trig, events were kept
     4  error while writing the output file (e.g. disk full)
    
