@@ -724,6 +724,9 @@ int main(int argc, char*argv[])
   int    outside_klim_nu(0);
   int    outside_klim_t2(0);
   int    outside_klim_tmin(0);
+  // Bookkeeping of keep/reject weights above the fixed maximum weight
+  long   n_trials_w(0), n_over_wmax(0);
+  double sum_w_trials(0.), sum_w_excess(0.), max_w_seen(0.);
   int    outside_klim_x(0);
   int    outside_klim_W2(0);
   int    outside_klim_Q2(0);
@@ -2012,6 +2015,21 @@ int main(int argc, char*argv[])
 	  // Keep/reject on d(sigma) times the Jacobian of the flat t sampling.
 	  // (The cross-section written in the output is still d(sigma) alone.)
 	  double xsec_w = xsec*tjac;
+	  // Max weight of the keep/reject (tuned constants). Weights above it are
+	  // always kept but under-represented: count them and report.
+	  const double wmax = (trk.Process == 0) ? 2. : 800.;
+	  n_trials_w++;
+	  if(xsec_w > 0.) sum_w_trials += xsec_w;
+	  if(xsec_w > max_w_seen) max_w_seen = xsec_w;
+	  if(xsec_w > wmax)
+	    {
+	      n_over_wmax++;
+	      sum_w_excess += xsec_w - wmax;
+	      if(n_over_wmax <= 10)
+		cout << "WARNING: keep/reject weight " << xsec_w << " exceeds max weight " << wmax
+		     << " (xB=" << xbj << ", Q2=" << Q2 << ", t=" << t << ", phi=" << Phiqqp << ")"
+		     << (n_over_wmax == 10 ? "; further warnings suppressed" : "") << endl;
+	    }
 	  if((trk.Process == 0 && xsec_w>rndm.Rndm()*2)||(trk.Process == 1 && xsec_w>rndm.Rndm()*800))
 	    {
 	      kr = 1;
@@ -2108,6 +2126,12 @@ int main(int argc, char*argv[])
     }
   cout<<"Number of events kept   " << counter_kept   <<endl;
   cout<<"Number of events rejected   "<< counter_rejected   <<endl;
+  cout<<"Max keep/reject weight seen   "<< max_w_seen <<" (max weight used: "<< (ro->get_fProc() == 0 ? 2. : 800.) <<")"<<endl;
+  cout<<"Trials with weight above max   "<< n_over_wmax <<" / "<< n_trials_w <<endl;
+  if(sum_w_trials > 0.)
+    cout<<"Fraction of total cross-section lost to max-weight clipping   "<< sum_w_excess/sum_w_trials <<endl;
+  if(n_over_wmax > 0)
+    cout<<"WARNING: the max weight was exceeded; kept-event distributions are biased where the cross-section is largest."<<endl;
   cout<<"Number of hit neutron events kept   " << counter_kept_neut   <<endl; 
   cout<<"Number of hit proton events kept   " << counter_kept_prot   <<endl;
   cout<<"Number of events Out of kin. limits   "<< outside_klim   <<endl;
