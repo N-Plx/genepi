@@ -170,6 +170,25 @@ static string exe_dir(const char* argv0)
       char* r = realpath(argv0, NULL);
       if(r != NULL) { p = r; free(r); }
     }
+  else if(argv0 != NULL && std::getenv("PATH") != NULL)      // other systems: found through $PATH, search it like the shell
+    {
+      string path = std::getenv("PATH");
+      size_t start = 0;
+      while(p.empty() && start <= path.size())
+        {
+          size_t end = path.find(':', start);
+          if(end == string::npos) end = path.size();
+          string dir = path.substr(start, end - start);
+          if(dir.empty()) dir = ".";
+          string cand = dir + "/" + argv0;
+          if(access(cand.c_str(), X_OK) == 0)
+            {
+              char* r = realpath(cand.c_str(), NULL);
+              if(r != NULL) { p = r; free(r); }
+            }
+          start = end + 1;
+        }
+    }
   size_t k = p.rfind('/');
   return (k == string::npos) ? string("") : p.substr(0, k);
 }
