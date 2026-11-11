@@ -698,6 +698,9 @@ int main(int argc, char*argv[])
   double numin,  numax;
   double Q2min,  Q2max;
   double tmin,   tmax;
+  // t is drawn flat in an event-dependent range [tmin,tmax]; the corresponding
+  // Jacobian (tmax-tmin), normalised to the user t-range, multiplies the weight.
+  double tjac(1.);
   double nupmin, nupmax;
   double Epmin,  Epmax;
   
@@ -1333,6 +1336,7 @@ int main(int argc, char*argv[])
           //generate t:
           rndmt = rndm.Rndm();
           t     = tmin + (tmax - tmin)*rndmt;
+          tjac  = (tmax - tmin)/(ro->get_ftmax() - ro->get_ftmin());
           if(t > tmax || t < tmin)
             {
 	      // cout<<"event "<<ievt<<"; t out of range "<<tmin<<" "<<t<<" "<<tmax<<endl;
@@ -1475,7 +1479,7 @@ int main(int argc, char*argv[])
       if (iApZ == 3 || iApZ == 8 || iApZ == 21)
         {
 
-	  double Output[7];
+	  double Output[8];
 	  
 	  rndmt = rndm.Rndm();
           double rndmphi2 = rndm.Rndm();
@@ -1501,6 +1505,7 @@ int main(int argc, char*argv[])
           Phikqp   = Output[4];
           ThetakPp = Output[5];
           PhikPp   = Output[6];
+          tjac     = Output[7];
 	  
 	  // The calculation on basis of max and min possible energy of produced particle, which is used in the stationary target case,
 	  // doesn't apply here -- but t was generated in the range possible, given the energy of the photon or meson, which is well constrained in the CM frame. 
@@ -2004,7 +2009,10 @@ int main(int argc, char*argv[])
 	  //Output file is written according to probability distrib.      
 	  //Limits for this keep/reject have been tuned by Rong Wang, Ipno	 
 
-	  if((trk.Process == 0 && xsec>rndm.Rndm()*2)||(trk.Process == 1 && xsec>rndm.Rndm()*800))
+	  // Keep/reject on d(sigma) times the Jacobian of the flat t sampling.
+	  // (The cross-section written in the output is still d(sigma) alone.)
+	  double xsec_w = xsec*tjac;
+	  if((trk.Process == 0 && xsec_w>rndm.Rndm()*2)||(trk.Process == 1 && xsec_w>rndm.Rndm()*800))
 	    {
 	      kr = 1;
 	      counter_kept++;

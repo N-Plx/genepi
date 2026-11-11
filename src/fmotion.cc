@@ -21,6 +21,7 @@ output:
   Epp Energy of the outgoing nucleon
   thetaqp (Phiqp) polar (azimuthal) angle of the outgoing produced particle wrt inc. electron (LAB)
   thetapp (Phipp) polar (azimuthal) angle of the outgoing nucleon wrt inc. electron (LAB)
+  tjac    width of the sampled t-range divided by the user t-range (Jacobian of the flat t sampling)
 
 */
 int fmotion(double rndm_t,double rndm_phi,int ipn,int ims,double q,double nu,double W2, double Pp,
@@ -337,6 +338,9 @@ int fmotion(double rndm_t,double rndm_phi,int ipn,int ims,double q,double nu,dou
   out[4] = Phiqp;
   out[5] = thetapp;
   out[6] = Phipp;
+  // Jacobian of the flat t sampling: width of the event-dependent t-range,
+  // normalised to the user t-range (<= 1)
+  out[7] = (tmax - tmin)/(ftmax - ftmin);
 
   return 0;
 }
