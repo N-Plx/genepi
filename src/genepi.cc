@@ -151,6 +151,7 @@ static unsigned int seed_arg(const char* s)
 
 // Long-option code for --raster_y (was the multi-character constant 'zz')
 const int OPT_RASTER_Y = 1000;
+const int OPT_MAX_TRIALS = 1001;
 
 int main(int argc, char*argv[])
 {
@@ -182,6 +183,7 @@ int main(int argc, char*argv[])
   double  ycol_min = -999., ycol_max = 0.025;
   double vx=0., vy=0., vz=-3.;
   double raster_x=0., raster_y=0.;
+  double max_trials = 0.;   // 0 = no limit (but stop if nothing is accepted, see event loop)
   int x_sec_type = 3, gpd_type = 1; 
   
   char* short_options = (char*)"a:bc:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v:w:x:y:z:";
@@ -213,6 +215,7 @@ int main(int argc, char*argv[])
     {"vz"      ,required_argument,NULL,'y'},
     {"raster_x",required_argument,NULL,'z'},
     {"raster_y",required_argument,NULL,OPT_RASTER_Y},
+    {"max_trials",required_argument,NULL,OPT_MAX_TRIALS},
     {NULL,0,NULL,0}
   };
 
@@ -580,6 +583,13 @@ int main(int argc, char*argv[])
             cout<<"raster_y is set to "<< raster_y <<" cm "<<endl;
             break;
           };
+	case OPT_MAX_TRIALS:
+          {
+            max_trials = num_arg("max_trials", optarg);
+            if(max_trials < 0. || max_trials != floor(max_trials)) { cerr << "ERROR: --max_trials must be a non-negative integer" << endl; exit(1); }
+            cout << "max_trials is set to " << (long long)max_trials << endl;
+            break;
+          };
 	case '?': default:
           {
             // unknown option or missing value (getopt already printed which one)
@@ -860,12 +870,33 @@ int main(int argc, char*argv[])
   //=====================Start event loop===================//
   cout << "Start event loop" << endl;
   long long ievt = 0;
+  // Protection against endless loops: no accepted event after MAX_TRIALS_NO_EVENT
+  // trials means the requested phase space is (nearly) empty -> stop with an error.
+  const long long MAX_TRIALS_NO_EVENT = 1000000;
+  long long n_trials = 0;
+  long long n_reject_msg = 0;   // rejection messages printed (capped, they used to flood stdout)
+  int exit_code = 0;
 
   //while(counter_kept_neut < ro->get_fNevts())
   //{
   //for(long long ievt=0; ievt<ro->get_fNevts(); ievt++)
   while(counter_kept<ro->get_fNevts())  
     {
+      n_trials++;
+      if(counter_kept == 0 && n_trials > MAX_TRIALS_NO_EVENT)
+	{
+	  cerr << "ERROR: no event accepted after " << MAX_TRIALS_NO_EVENT << " trials: the requested "
+	       << "kinematic range is empty or nearly empty for this beam energy and target. Stopping." << endl;
+	  exit_code = 2;
+	  break;
+	}
+      if(max_trials > 0. && n_trials > max_trials)
+	{
+	  cerr << "WARNING: --max_trials " << (long long)max_trials << " reached with " << counter_kept
+	       << " of " << ro->get_fNevts() << " events kept. Stopping." << endl;
+	  exit_code = 3;
+	  break;
+	}
       ievt++;
       //Get event info from input
       trk.Evt_ID  = ievt;
@@ -1197,7 +1228,7 @@ int main(int argc, char*argv[])
       
       if(Q2 > Q2max || Q2 < Q2min)
 	{
-	  cout<<"Event = "<<ievt<<"; Q2 out of range "<<
+	  if(++n_reject_msg <= 20) cout<<"Event = "<<ievt<<"; Q2 out of range "<<
 	    Q2min<<" "<<Q2<<" "<<Q2max<<endl;
 	  //out0<<"Event = "<<ievt<<"; Q2 out of range "<<
 	  //  Q2min<<" "<<Q2<<" "<<Q2max<<endl;
@@ -1230,7 +1261,7 @@ int main(int argc, char*argv[])
       
       if(xbj > xmax || xbj < xmin)
 	{
-	  cout<<"event "<<ievt<<"; xbj out of range "<<
+	  if(++n_reject_msg <= 20) cout<<"event "<<ievt<<"; xbj out of range "<<
 	    xmin<<" "<<xbj<<" "<<xmax<<endl;
 	  //out0<<"event "<<ievt<<"; xbj out of range "<<
 	  //  xmin<<" "<<xbj<<" "<<xmax<<endl;
@@ -1347,7 +1378,7 @@ int main(int argc, char*argv[])
       
       if(y > ro->get_fYmax() || y < ro->get_fYmin())
 	{
-	  cout<<"event "<<ievt<<"; y out of range "<<
+	  if(++n_reject_msg <= 20) cout<<"event "<<ievt<<"; y out of range "<<
 	    ro->get_fYmin()<<" "<<y<<" "<<ro->get_fYmax()<<endl;
 	  //out0<<"event "<<ievt<<"; y out of range "<<
 	  //  ro->get_fYmin()<<" "<<y<<" "<<ro->get_fYmax()<<endl;
@@ -1459,7 +1490,7 @@ int main(int argc, char*argv[])
           // Check that the produced particle is in a possible range:
           if(nup > nupmax || nup < nupmin)
             {
-              cout<<"event "<<ievt<<"; nup out of range "<<
+              if(++n_reject_msg <= 20) cout<<"event "<<ievt<<"; nup out of range "<<
 		nupmin<<" "<<nup<<" "<<nupmax<<endl;
               //out0<<"event "<<ievt<<"; nup out of range "<<
 	      //	nupmin<<" "<<nup<<" "<<nupmax<<endl;
@@ -1476,7 +1507,7 @@ int main(int argc, char*argv[])
           Pp = sqrt(sqr(Ep) - M_scat2);
           if(Ep > Epmax || Ep < Epmin)
             {
-              cout<<"event "<<ievt<<"; Ep out of range "<<
+              if(++n_reject_msg <= 20) cout<<"event "<<ievt<<"; Ep out of range "<<
 		Epmin<<" "<<Ep<<" "<<Epmax<<endl;
               //out0<<"event "<<ievt<<"; Ep out of range "<<
 	      //	Epmin<<" "<<Ep<<" "<<Epmax<<endl;
@@ -1597,8 +1628,7 @@ int main(int argc, char*argv[])
 	  
           if(t > ro->get_ftmax() || t < ro->get_ftmin())
             {
-	      cout << "Non-stationary target " << endl;
-	      cout<<"event "<<ievt<<"; t out of range "<<
+	      if(++n_reject_msg <= 20) cout << "Non-stationary target: event "<<ievt<<"; t out of range "<<
 	      	ro->get_ftmin()<<" "<<t<<" "<< ro->get_ftmax() <<endl;
 	      //out0<<"event "<<ievt<<"; t out of range "<<
 	      //	ro->get_ftmax() <<" "<<t<<" "<< ro->get_ftmax() <<endl;
@@ -2276,7 +2306,10 @@ int main(int argc, char*argv[])
   //out0<<"Epmin    = "<<setw(10)<<EPmin <<";    Epmax    = "<<setw(10)<<EPmax <<endl;
   //out0<<endl;
   
+  cout<<"Number of trials   "<< n_trials <<endl;
+  if(n_reject_msg > 20)
+    cout<<"(" << n_reject_msg - 20 << " further out-of-range messages not printed)"<<endl;
   fclose(ptr);
-  return 0;
+  return exit_code;
 }
 
