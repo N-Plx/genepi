@@ -1011,7 +1011,8 @@ int main(int argc, char*argv[])
 	  E = sqrt(sqr(P) + M_TARG2);
 	  
 	  //generate polar angle of initial nucleon wrt the q-direction: needed to calculate nu
-	  ThetaqP = pi(1)*rndm.Rndm();
+	  // isotropic: sample cos(theta) uniformly in [-1,1], not theta in [0,pi]
+	  ThetaqP = acos(1. - 2.*rndm.Rndm());
 	  
 	  // azimuthal angle of initial nucleon wrt the q-direction:
 	  double PhiqP = 2.*pi(1)*rndm.Rndm();
