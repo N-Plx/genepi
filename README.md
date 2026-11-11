@@ -37,7 +37,9 @@ Run genepi :
 
     option   default  comment
     --trig     10000   number of output events
-    --seed     time    seed for random numbers. if unspecified, uses current time information
+    --seed     auto    seed for random numbers, integer in [1, 4294967295]. If unspecified, a seed is generated
+                       (random device, clock, process id, host name) and printed in the log. Use a unique
+                       seed per job (e.g. from the grid job id) for reproducible productions.
     --docker   0       is ignored
     --Ebeam    10.6    incident e- momentum [GeV]
     --process  0       0 for DVCS, 1 for meson production.
@@ -63,9 +65,26 @@ Run genepi :
     --vz       -3.     Vertex position z
     --raster_x 0.      Raster radius in the x direction [cm]
     --raster_y 0.      Raster radius in the y direction [cm]
+    --output   genepi.dat  Output file (LUND format)
+    --max_trials 0     Stop after this many trials (0 = no limit); the events kept so far are written
     
    where 
    - P,P' are the in/out nucleon 4-momenta
    - q the virtual photon 4-momentum
    - k/k' the in/out electron 4-momenta and Ebeam/E' their energies.
+
+Invalid or inconsistent options (unknown option, non-numeric value, min >= max, ...) stop the program
+with an error message. If no event is accepted after 1,000,000 trials, the requested phase space is
+considered empty and the program stops.
+
+The GPD table gpd_table.dat is read from $GENEPI if this variable is set, otherwise from the directory
+of the executable, then from the current directory.
+
+Exit status:
+
+    0  success
+    1  invalid input, missing GPD table, cannot open the output, or fatal JETSET error
+    2  no event accepted (empty phase space)
+    3  --max_trials reached before --trig events were kept
+    4  error while writing the output file (e.g. disk full)
    

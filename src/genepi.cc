@@ -12,6 +12,8 @@
 #include <cstdlib>
 #include "genepi.h"
 #include <cerrno>
+#include <climits>
+#include <unistd.h>
 #include "inl_funcs.h"
 #include "lujets_cc.h"
 #include "jetset.h"
@@ -152,18 +154,27 @@ static unsigned int seed_arg(const char* s)
 // Long-option code for --raster_y (was the multi-character constant 'zz')
 const int OPT_RASTER_Y = 1000;
 const int OPT_MAX_TRIALS = 1001;
+const int OPT_OUTPUT = 1002;
+
+// Directory containing the running executable ("" if unknown), used to find
+// gpd_table.dat when $GENEPI is not set and the job runs from another directory.
+static string exe_dir(const char* argv0)
+{
+  string p;
+  char buf[PATH_MAX];
+  ssize_t n = readlink("/proc/self/exe", buf, sizeof(buf) - 1);   // Linux
+  if(n > 0) { buf[n] = '\0'; p = buf; }
+  else if(argv0 != NULL && strchr(argv0, '/') != NULL)       // other systems: path given on the command line
+    {
+      char* r = realpath(argv0, NULL);
+      if(r != NULL) { p = r; free(r); }
+    }
+  size_t k = p.rfind('/');
+  return (k == string::npos) ? string("") : p.substr(0, k);
+}
 
 int main(int argc, char*argv[])
 {
-  //Erase previous file
-  cout << "Erasing previous file content" << endl;
-  // Open the output file once for the whole run (truncates any previous content).
-  ptr = fopen("genepi.dat","w");
-  if(ptr == NULL)
-    {
-      cerr << "Cannot open output file genepi.dat" << endl;
-      return 1;
-    }
   
   //INPUT VARIABLES                                   
   //Beam helicity, target helicity, x_sec type, gpd type hard-coded                                                                                                                                              
@@ -183,6 +194,7 @@ int main(int argc, char*argv[])
   double  ycol_min = -999., ycol_max = 0.025;
   double vx=0., vy=0., vz=-3.;
   double raster_x=0., raster_y=0.;
+  string output_file = "genepi.dat";
   double max_trials = 0.;   // 0 = no limit (but stop if nothing is accepted, see event loop)
   int x_sec_type = 3, gpd_type = 1; 
   
@@ -216,6 +228,7 @@ int main(int argc, char*argv[])
     {"raster_x",required_argument,NULL,'z'},
     {"raster_y",required_argument,NULL,OPT_RASTER_Y},
     {"max_trials",required_argument,NULL,OPT_MAX_TRIALS},
+    {"output"  ,required_argument,NULL,OPT_OUTPUT},
     {NULL,0,NULL,0}
   };
 
@@ -590,6 +603,12 @@ int main(int argc, char*argv[])
             cout << "max_trials is set to " << (long long)max_trials << endl;
             break;
           };
+	case OPT_OUTPUT:
+          {
+            output_file = optarg;
+            cout << "output file is set to " << output_file << endl;
+            break;
+          };
 	case '?': default:
           {
             // unknown option or missing value (getopt already printed which one)
@@ -628,12 +647,22 @@ int main(int argc, char*argv[])
     if(t_max > 0.)                  fail("--t_max must be <= 0 (t is negative)");
     if(raster_x < 0. || raster_y < 0.) fail("raster radii must be >= 0");
     if(targ_A < 1 || targ_Z < 0 || targ_Z > targ_A) fail("invalid target: need targ_A >= 1 and 0 <= targ_Z <= targ_A");
+    if(output_file.empty())         fail("--output must not be empty");
     if(nerr > 0)
       {
         cerr << nerr << " invalid input(s), stopping." << endl;
         exit(1);
       }
   }
+
+  // Open the output file once for the whole run (truncates any previous content)
+  ptr = fopen(output_file.c_str(), "w");
+  if(ptr == NULL)
+    {
+      cerr << "ERROR: cannot open output file " << output_file << ": " << strerror(errno) << endl;
+      exit(1);
+    }
+  cout << "Writing events to " << output_file << endl;
 
   //============Handling input file and output location======================//
   
@@ -767,19 +796,26 @@ int main(int argc, char*argv[])
   
   //read GPDs from gpd_table.dat
   cout << "Reading GPD table" << endl;
-  string gpd_tbl=("gpd_table.dat");
-  if (std::getenv("GENEPI") != NULL) 
+  // Look for gpd_table.dat in $GENEPI if set, otherwise next to the executable,
+  // then in the current directory (it used to be the current directory only).
+  vector<string> gpd_candidates;
+  if(std::getenv("GENEPI") != NULL) gpd_candidates.push_back(string(std::getenv("GENEPI")) + "/gpd_table.dat");
+  else
     {
-      string absolute_path = std::getenv("GENEPI");
-      absolute_path += "/";
-      absolute_path += gpd_tbl;
-      gpd_tbl = absolute_path;
-      }
-  if(fexist(gpd_tbl.c_str()))
+      string d = exe_dir(argv[0]);
+      if(!d.empty()) gpd_candidates.push_back(d + "/gpd_table.dat");
+      gpd_candidates.push_back("gpd_table.dat");
+    }
+  string gpd_tbl;
+  for(const string& c : gpd_candidates) if(!fexist(c.c_str())) { gpd_tbl = c; break; }   // fexist() returns 0 if the file exists
+  if(gpd_tbl.empty())
     {
-      cout<<"File "<<gpd_tbl.c_str()<<" does not exist"<<endl;
+      cerr << "ERROR: gpd_table.dat not found; looked in:";
+      for(const string& c : gpd_candidates) cerr << " " << c;
+      cerr << ". Set $GENEPI to the directory that contains it." << endl;
       exit(1);
     }
+  cout << "Using GPD table " << gpd_tbl << endl;
   
   dv->read_gpds(gpd_tbl);
   
