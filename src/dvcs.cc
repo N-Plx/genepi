@@ -391,7 +391,9 @@ int DVCS::dvcs_xsec(ReadOptFile *ro, double x, double y, double Q2, double t, do
 
   hc0_DVCS      =  2.*(1.+sqr(1.-y))*C_DVCS;
   hc1_DVCS      =  8.*K*(2.-y)/(2.-x)*C_DVCS_eff;
-  hs1_DVCS      = -8.*K*y/(2.-x)*C_DVCS_eff;
+  // BMK eq. 44: s1^DVCS ~ Im C^DVCS(F_eff,F*). With the real approximation
+  // F_eff = -2xi/(1+xi) F used here, that imaginary part vanishes.
+  hs1_DVCS      = 0.;
 
   //long. pol. target
   C_DVCS_LP     = (4.*(1.-x)*HHtconjpHtHconj - x*(x2/2. + (2.-x)*tau)*EEtconjpEtEconj 
@@ -401,7 +403,7 @@ int DVCS::dvcs_xsec(ReadOptFile *ro, double x, double y, double Q2, double t, do
 
   hc0_DVCS_LP   = 2.*y*(2. - y)*C_DVCS_LP;
   hc1_DVCS_LP   = 8.*K*y/(2. - x)*C_DVCS_eff_LP;
-  hs1_DVCS_LP   = -8.*K*(2.-y)/(2. - x)*C_DVCS_eff_LP;
+  hs1_DVCS_LP   = 0.; // same reasoning as hs1_DVCS (BMK eq. 47)
 
   XSfact     = alpha(3)*x*y/(16.*pi(2)*Q2*sqrt(1. + eps2));
   DVCSfact   = 1./(y2*Q2);
