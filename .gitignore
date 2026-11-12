@@ -1,5 +1,17 @@
+# build products
 *.o
 *.a
+/genepi
+src/genepi
+# generator output and ROOT files
 *.dat
+!gpd_table.dat
+*.lund
 *.root
-genepi
+# docs site build
+site/
+# editor / OS files
+.DS_Store
+*~
+\#*\#
+.vscode/
