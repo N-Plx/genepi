@@ -1,0 +1,23 @@
+site_name: GENEPI
+site_description: Event generator for DVCS/BH and pi0/eta electroproduction (CLAS12)
+repo_url: https://github.com/N-Plx/genepi
+edit_uri: edit/OSG/docs/
+docs_dir: docs
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - content.code.copy
+nav:
+  - Home: index.md
+  - Physics model: physics.md
+  - Sampling and weights: sampling.md
+  - Options: options.md
+  - Output format: output.md
+  - Validation and limitations: validation.md
+  - Changes: changelog.md
+markdown_extensions:
+  - tables
+  - toc:
+      permalink: true
+  - admonition
