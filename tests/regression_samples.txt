@@ -1,0 +1,3 @@
+p_dvcs|1500|--targ_A 1 --targ_Z 1
+nh3_dvcs|1000|--targ_A 17 --targ_Z 10
+p_pi0|1000|--targ_A 1 --targ_Z 1 --process 1 --meson 0

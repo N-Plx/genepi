@@ -1,0 +1,50 @@
+name: CI
+
+# Build GENEPI and run the tests in tests/ on every push and pull request to OSG.
+on:
+  push:
+    branches: [OSG]
+  pull_request:
+    branches: [OSG]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    container: rootproject/root:6.34.00-ubuntu24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends gfortran make > /dev/null
+
+      - name: Build
+        run: |
+          make 2>&1 | tee build.log
+          test -x ./genepi
+          # report compiler warnings from GENEPI's own sources in the job summary
+          { echo '### Compiler warnings'; echo '```';
+            grep -E 'warning:' build.log | grep -E 'src/|include/' | sort -u | head -50 || true;
+            echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Build test programs
+        run: make -C tests
+
+      - name: Smoke tests (all targets/processes, LUND checks, options and exit codes)
+        run: tests/run_smoke.sh
+
+      - name: Physics regression (cross-section points, distributions)
+        run: tests/run_regression.sh
+
+      - name: Keep test outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-outputs
+          path: |
+            build.log
+            tests/out/
+          retention-days: 14
