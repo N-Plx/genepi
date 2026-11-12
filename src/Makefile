@@ -1,18 +1,30 @@
 CCSRCS     = $(wildcard *.cc)
-EXE        = genepi
-FSRCS      = $(wildcard *.f)
+# The executable is linked directly in the top directory, next to gpd_table.dat
+EXE        = ../genepi
 
 CXX        = g++
-#CXX        = g++-3.4
 
+# ROOT: use $ROOTSYS if set, otherwise root-config from the PATH
+ifdef ROOTSYS
+ROOTCONFIG = $(ROOTSYS)/bin/root-config
+else
+ROOTCONFIG = root-config
+endif
 
-CCFLAGS    = -g -Wall -fPIC -Wno-deprecated
-CCFLAGS    += `$(ROOTSYS)/bin/root-config --cflags`
-CCFLAGS    += -I../include -I. -I$(ROOTSYS)/include
+# Local headers first: ROOT ships its own hepevt.h, which must not shadow ../include/hepevt.h
+CCFLAGS    = -I../include -I. -g -Wall -fPIC -Wno-deprecated
+CCFLAGS   += $(shell $(ROOTCONFIG) --cflags)
 
-ROOTLIB    = `$(ROOTSYS)/bin/root-config --glibs`
+ROOTLIB    = $(shell $(ROOTCONFIG) --glibs)
+
+# gfortran runtime: find its directory (needed on macOS / non-system compilers)
+GFORTRAN_LIB := $(shell gfortran -print-file-name=libgfortran$(if $(filter Darwin,$(shell uname -s)),.dylib,.so))
+GFORTRAN_DIR := $(dir $(GFORTRAN_LIB))
+
 JLIB       = ../jetset_lib/libjetset.a
-MYLIBS     = -Wl,-rpath, -lm -lgfortran -L../jetset_lib -ljetset
+# ludata.o (JETSET BLOCK DATA) is linked explicitly: some linkers do not pull a
+# BLOCK DATA member out of an archive, leaving the JETSET defaults at zero.
+MYLIBS     = ../jetset_lib/ludata.o -L../jetset_lib -ljetset -L$(GFORTRAN_DIR) -Wl,-rpath,$(GFORTRAN_DIR) -lgfortran -lm
 LIBS       = $(ROOTLIB) $(MYLIBS)
 CCOBJS     = $(CCSRCS:%.cc=%.o)
 
@@ -20,19 +32,17 @@ all: $(JLIB) $(EXE)
 
 $(JLIB):
 	@echo compiling Jetset lib
-	make -C ../jetset_lib
+	$(MAKE) -C ../jetset_lib
 
-$(EXE): $(CCOBJS)
-	$(CXX) $(CCFLAGS) -o $@ $(CCOBJS) $(FOBJS) $(LIBS)
-	cp $(EXE) ../
+$(EXE): $(CCOBJS) $(JLIB)
+	$(CXX) $(CCFLAGS) -o $@ $(CCOBJS) $(LIBS)
 
 .cc.o :
 	@echo Compiling $@
 	@$(CXX) $(CCFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(EXE) $(CCOBJS) ../$(EXE)
+	rm -f $(EXE) $(CCOBJS) genepi
 
-cleanall:
-	rm -f $(EXE) $(CCOBJS) ../$(EXE) ../jetset_lib/*.o $(JLIB)
-
+cleanall: clean
+	rm -f ../jetset_lib/*.o $(JLIB)

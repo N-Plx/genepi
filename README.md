@@ -4,7 +4,9 @@ GENEPI Monte Carlo event generator. OSG version.
 
 Describing electroproduction of photons and mesons off free and bound nucleons. Processes described : Bethe-Heitler, deeply virtual Compton scattering, pi0/eta production (and their decay to photons).
 
-Documentation : https://misportal.jlab.org/ul/Physics/Hall-B/clas/viewFile.cfm/2009-024.pdf?documentId=554
+Documentation : `docs/` (physics model, sampling, options, output format, validation) and the original CLAS note https://misportal.jlab.org/ul/Physics/Hall-B/clas/viewFile.cfm/2009-024.pdf?documentId=554
+
+Tests : `tests/README.md`; they run automatically on GitHub Actions for every push and pull request to this branch.
 
 Additional features :
 
@@ -12,23 +14,22 @@ Additional features :
 - NH3/ND3 targets : events are randomly chosen to be on N or H/D. The output for N has a particle with ID 12. This is a trick, a fake ID to make it go through the simulation without interacting but still be able to recognize N events in the simulation output (gemc cannot track a generic C13/N13 ion from a LUND file: the real PDG code makes it exit).
 - The LUND header target A and Z (columns 2-3, MC::Event atarget/ztarget in gemc output) are those of the nucleus actually hit in each event: 1/1 for H, 2/1 for D, 4/2 for He4, 14/7 for N, 1/0 for a free neutron.
 - He4 targets : the spectator system is written with its real PDG code, He3 (1000020030) or triton (1000010030), which gemc tracks (MC::Particle pid 49/46).
-- Input file also allows to choose the vertex position and raster radius. The events are distributed uniformely inside an ellipse for which you can choose the center (vx, vy, vz) and x/y radiuses (raster x, raster y).
+- The vertex position and raster radius are chosen with --vx/--vy/--vz and --raster_x/--raster_y. The events are distributed uniformly inside an ellipse of centre (vx, vy) and half-axes (raster_x, raster_y), at z = vz.
 
 Note that :
-- Input limits given as command-line arguments are used, but the final limits can be a little more tight since they are all re-computed and checked against each other to be consistent, especially when adding Fermi motion to the nucleons in nuclei.
+- Events outside the physical limits (y, W2, nu, t, ...) are rejected, so the effective ranges can be tighter than the ones given on the command line, especially with Fermi motion in nuclei.
 
-How to compile (on ifarm, on a clean environment) :
-> setenv ROOTSYS /apps/root/6.10.02/root
-> 
-> setenv ROOTLIB /apps/root/6.10.02/root/lib
-> 
-> setenv LD_LIBRARY_PATH <span>$</span>{PATH}:${ROOTSYS}/lib
+How to compile : needs ROOT (root-config, taken from $ROOTSYS if set, otherwise from the PATH), gfortran and make. On ifarm, for example:
+> module use /scigroup/cvmfs/hallb/clas12/sw/modulefiles
 >
-> setenv PATH <span>$</span>{PATH}:${ROOTSYS}/bin
-> 
-> make 
+> module load clas12
+>
+> make
 
-Clean executables :
+The executable `genepi` is created in the top directory, next to gpd_table.dat. Check a build with:
+> make -C tests && tests/run_smoke.sh
+
+Clean :
 > make clean
 
 Run genepi :
