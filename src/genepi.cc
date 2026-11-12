@@ -156,6 +156,8 @@ static unsigned int seed_arg(const char* s)
 const int OPT_RASTER_Y = 1000;
 const int OPT_MAX_TRIALS = 1001;
 const int OPT_OUTPUT = 1002;
+const int OPT_GAMMA_BEAM_MIN = 1003;
+const int OPT_GAMMA_E_MIN = 1004;
 
 // Directory containing the running executable ("" if unknown), used to find
 // gpd_table.dat when $GENEPI is not set and the job runs from another directory.
@@ -215,6 +217,9 @@ int main(int argc, char*argv[])
   double vx=0., vy=0., vz=-3.;
   double raster_x=0., raster_y=0.;
   string output_file = "genepi.dat";
+  // DVCS/BH: minimum angles [deg] of the real photon w.r.t. the beam and the scattered electron.
+  // Bethe-Heitler diverges (massless-electron BMK formulas) for photons collinear with either lepton.
+  double gamma_beam_min = 1., gamma_e_min = 1.;
   double max_trials = 0.;   // 0 = no limit (but stop if nothing is accepted, see event loop)
   int x_sec_type = 3, gpd_type = 1; 
   
@@ -249,6 +254,8 @@ int main(int argc, char*argv[])
     {"raster_y",required_argument,NULL,OPT_RASTER_Y},
     {"max_trials",required_argument,NULL,OPT_MAX_TRIALS},
     {"output"  ,required_argument,NULL,OPT_OUTPUT},
+    {"gamma_beam_min",required_argument,NULL,OPT_GAMMA_BEAM_MIN},
+    {"gamma_e_min",required_argument,NULL,OPT_GAMMA_E_MIN},
     {NULL,0,NULL,0}
   };
 
@@ -629,6 +636,18 @@ int main(int argc, char*argv[])
             cout << "output file is set to " << output_file << endl;
             break;
           };
+	case OPT_GAMMA_BEAM_MIN:
+          {
+            gamma_beam_min = num_arg("gamma_beam_min", optarg);
+            cout << "gamma_beam_min is set to " << gamma_beam_min << " deg" << endl;
+            break;
+          };
+	case OPT_GAMMA_E_MIN:
+          {
+            gamma_e_min = num_arg("gamma_e_min", optarg);
+            cout << "gamma_e_min is set to " << gamma_e_min << " deg" << endl;
+            break;
+          };
 	case '?': default:
           {
             // unknown option or missing value (getopt already printed which one)
@@ -668,6 +687,8 @@ int main(int argc, char*argv[])
     if(raster_x < 0. || raster_y < 0.) fail("raster radii must be >= 0");
     if(targ_A < 1 || targ_Z < 0 || targ_Z > targ_A) fail("invalid target: need targ_A >= 1 and 0 <= targ_Z <= targ_A");
     if(output_file.empty())         fail("--output must not be empty");
+    if(gamma_beam_min < 0. || gamma_beam_min >= 180.) fail("--gamma_beam_min must be in [0, 180) deg");
+    if(gamma_e_min < 0. || gamma_e_min >= 180.)       fail("--gamma_e_min must be in [0, 180) deg");
     if(nerr > 0)
       {
         cerr << nerr << " invalid input(s), stopping." << endl;
@@ -874,6 +895,7 @@ int main(int argc, char*argv[])
   int    outside_klim_nu(0);
   int    outside_klim_t2(0);
   int    outside_klim_tmin(0);
+  long   outside_gamma_angle(0);   // DVCS photons rejected by --gamma_beam_min / --gamma_e_min
   // Bookkeeping of keep/reject weights above the fixed maximum weight
   long   n_trials_w(0), n_over_wmax(0);
   double sum_w_trials(0.), sum_w_excess(0.), max_w_seen(0.);
@@ -1740,6 +1762,20 @@ int main(int argc, char*argv[])
           Thetakpqp    = acos(cosThetakpqp);
 	  
 	} // END OF FERMI MOTION SECTION FOR A MOVING TARGET
+
+      // DVCS/BH: reject photons (nearly) collinear with the beam (Thetakqp) or with the scattered
+      // electron (Thetakpqp), where the massless BH propagators P1/P2 vanish and the cross-section
+      // diverges. Written as !(a >= b) so that a NaN angle is rejected as well.
+      if(trk.Process == 0 &&
+         (!(Thetakqp*180./pi(1) >= gamma_beam_min) || !(Thetakpqp*180./pi(1) >= gamma_e_min)))
+	{
+	  outside_klim++;
+	  outside_gamma_angle++;
+	  dv->init_dvcs();
+	  init_event();
+	  init_track();
+	  continue;
+	}
       
       ycol  = get_ycol(t, xbj, Q2);
 
@@ -2311,6 +2347,8 @@ int main(int argc, char*argv[])
   cout<<"Number of events Out of t limits   "<< outside_klim_t   <<endl;
   cout<<"Number of events Out of t limits 2  "<< outside_klim_t2   <<endl;
   cout<<"Number of events Out of t limits (tmin)  "<< outside_klim_tmin   <<endl;
+  if(ro->get_fProc() == 0)
+    cout<<"Number of events with photon within "<< gamma_beam_min <<" deg of the beam or "<< gamma_e_min <<" deg of e'   "<< outside_gamma_angle <<endl;
   cout<<"Number of events Out of nu limits   "<< outside_klim_nu   <<endl;
   cout<<"Number of events Out of W2 limits   "<< outside_klim_W2   <<endl;
   cout<<"Number of events Out of Q2 limits   "<< outside_klim_Q2   <<endl;

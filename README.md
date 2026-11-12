@@ -66,6 +66,8 @@ Run genepi :
     --raster_x 0.      Raster radius in the x direction [cm]
     --raster_y 0.      Raster radius in the y direction [cm]
     --output   genepi.dat  Output file (LUND format)
+    --gamma_beam_min 1 DVCS only: minimum angle [deg] between the real photon and the beam
+    --gamma_e_min    1 DVCS only: minimum angle [deg] between the real photon and the scattered electron
     --max_trials 0     Stop after this many trials (0 = no limit); the events kept so far are written.
                        Also replaces the default limit of 10,000,000 trials without any accepted event.
     
@@ -73,6 +75,12 @@ Run genepi :
    - P,P' are the in/out nucleon 4-momenta
    - q the virtual photon 4-momentum
    - k/k' the in/out electron 4-momenta and Ebeam/E' their energies.
+
+Photon angle cuts (DVCS): the Bethe-Heitler cross-section is computed with the BMK formulas, which neglect the
+electron mass and diverge when the real photon is collinear with the incoming or the scattered electron. Events
+with the photon within --gamma_beam_min of the beam or within --gamma_e_min of the scattered electron are
+rejected before the cross-section is evaluated (default 1 deg each; 0 restores the previous behaviour). Such
+photons go down the beam pipe or merge with the electron in the detector.
 
 Invalid or inconsistent options (unknown option, non-numeric value, min >= max, ...) stop the program
 with an error message. If no event is accepted after 10,000,000 trials (or --max_trials, if given), the
