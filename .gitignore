@@ -15,3 +15,5 @@ site/
 *~
 \#*\#
 .vscode/
+# local validation outputs (published as release assets)
+claude_results/

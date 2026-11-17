@@ -2,6 +2,11 @@
 
 Changes since commit `16e6d38` (see `git log` for details).
 
+Validation report (release [genepi-v1](https://github.com/N-Plx/genepi/releases/tag/genepi-v1)):
+[genepi-v1_review.html](https://github.com/N-Plx/genepi/releases/download/genepi-v1/genepi-v1_review.html)
+— every fix with before/after distributions, comparison with the OSG productions 12145 (DVCS) and
+12146 (π⁰) through gemc and coatjava, and comparison with RG-C summer 2022 ND₃ data.
+
 ## Physics fixes
 - Neutron CFFs H and E: flavour form-factor normalisation (isospin mirror of the proton);
   the neutron beam-spin asymmetry changed sign.
