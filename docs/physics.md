@@ -26,15 +26,8 @@ The CFFs H, E, H̃, Ẽ are built from flavour CFFs read from `gpd_table.dat`:
 
 | Table | Grid | Used by |
 |---|---|---|
-| Re/Im of the 8 flavour CFFs, 5 models | ξ only: 51 log-spaced points, **0.01 ≤ ξ ≤ 1** | `gpd_type` 0–4 (default 1, hard-coded) |
+| Re/Im of the 8 flavour CFFs, 5 models | ξ only: 51 log-spaced points, **0.01 ≤ ξ ≤ 1** | `gpd_type` 0–4 (default 1, hard-coded to be used in OSG) |
 | Re/Im of H_u, H_d, 2 models | ξ (50 points) × \|t\| (21 points, 0.01–1.2 GeV²) | `gpd_type` 5, 6 (disabled) |
-
-**Kinematic limits.** ξ = x_B/(2 − x_B) must satisfy 0.01 < ξ < 1, i.e. **x_B > 0.0198**.
-Events outside are rejected and counted as "Out of xsec limits" (no extrapolation). At 10.6 GeV
-with Q² > 1 GeV² the smallest x_B is 0.050, so the limit is not reached; it is reached for
-Q²_min ≲ 0.5 GeV² at JLab energies or at higher beam energies. The CFFs have **no Q²
-evolution** and the t dependence comes only from the analytic form factors. Models 5/6 have
-known bugs (t interpolation index, out-of-range t not guarded) and must not be enabled as is.
 
 ### Bethe-Heitler collinear poles
 
@@ -65,5 +58,4 @@ channels; π⁰ → γγ or Dalitz e⁺e⁻γ; η → γγ, 3π⁰, π⁺π⁻π
 The direction of the Fermi momentum is isotropic. The struck nucleon and the spectator system
 are on shell (no binding energy, no off-shell or flux correction), so the initial state does
 not conserve energy exactly. The cross-section is the free-nucleon one evaluated at the
-event kinematics. Coherent scattering and the polarized-target dilution (He bath, packing
-fraction) are not modelled.
+event kinematics.

@@ -6,17 +6,11 @@ Describing electroproduction of photons and mesons off free and bound nucleons. 
 
 Documentation : `docs/` (physics model, sampling, options, output format, validation) and the original CLAS note https://misportal.jlab.org/ul/Physics/Hall-B/clas/viewFile.cfm/2009-024.pdf?documentId=554
 
-Tests : `tests/README.md`; they run automatically on GitHub Actions for every push and pull request to this branch.
-
-Additional features :
+Notable features :
 
 - Events are selected with a keep/reject method. This means the output distributions already take into account the cross-sections.
 - NH3/ND3 targets : events are randomly chosen to be on N or H/D. The output for N has a particle with ID 12. This is a trick, a fake ID to make it go through the simulation without interacting but still be able to recognize N events in the simulation output (gemc cannot track a generic C13/N13 ion from a LUND file: the real PDG code makes it exit).
-- The LUND header target A and Z (columns 2-3, MC::Event atarget/ztarget in gemc output) are those of the nucleus actually hit in each event: 1/1 for H, 2/1 for D, 4/2 for He4, 14/7 for N, 1/0 for a free neutron.
-- He4 targets : the spectator system is written with its real PDG code, He3 (1000020030) or triton (1000010030), which gemc tracks (MC::Particle pid 49/46).
 - The vertex position and raster radius are chosen with --vx/--vy/--vz and --raster_x/--raster_y. The events are distributed uniformly inside an ellipse of centre (vx, vy) and half-axes (raster_x, raster_y), at z = vz.
-
-Note that :
 - Events outside the physical limits (y, W2, nu, t, ...) are rejected, so the effective ranges can be tighter than the ones given on the command line, especially with Fermi motion in nuclei.
 
 How to compile : needs ROOT (root-config, taken from $ROOTSYS if set, otherwise from the PATH), gfortran and make. On ifarm, for example:
@@ -76,12 +70,6 @@ Run genepi :
    - P,P' are the in/out nucleon 4-momenta
    - q the virtual photon 4-momentum
    - k/k' the in/out electron 4-momenta and Ebeam/E' their energies.
-
-Photon angle cuts (DVCS): the Bethe-Heitler cross-section is computed with the BMK formulas, which neglect the
-electron mass and diverge when the real photon is collinear with the incoming or the scattered electron. Events
-with the photon within --gamma_beam_min of the beam or within --gamma_e_min of the scattered electron are
-rejected before the cross-section is evaluated (default 1 deg each; 0 restores the previous behaviour). Such
-photons go down the beam pipe or merge with the electron in the detector.
 
 Invalid or inconsistent options (unknown option, non-numeric value, min >= max, ...) stop the program
 with an error message. If no event is accepted after 10,000,000 trials (or --max_trials, if given), the

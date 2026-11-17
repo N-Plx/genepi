@@ -28,7 +28,3 @@ Regenerate the references and commit them together with the change, explaining w
 tests/make_references.sh        # 20000 events per sample, several minutes
 git add tests/ref && git commit
 ```
-
-Not covered yet (known issues): free-neutron meson output (pi0 written with one decay photon),
-and eta decays (intermediate pi0 written together with their photons). Detector simulation
-(gemc) and reconstruction (coatjava) are deliberately not part of these tests.

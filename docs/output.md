@@ -30,23 +30,7 @@ daughter (0), px, py, pz, E, m [GeV], vx, vy, vz [cm].
 
 ### The ¹⁴N remnant (PID 12)
 
-The ¹³C/¹³N remnant is written with the ν_e code 12, active. gemc cannot track a generic ion
-from a LUND file: an active line with the real code (1000060130 / 1000070130) makes gemc exit
-("Particle id … not found in G4 table"), and gemc's special code 80000 aborts. As a neutrino the
-remnant appears in MC::Particle without interacting, and nitrogen events can be identified by
-PID 12 in MC::Particle or by `atarget = 14` in MC::Event. The remnant mass (column 11) is the
-sum of the nucleon masses.
-
-## gemc and coatjava
-
-Tested with gemc 5.14 / 6.1 and coatjava 10.0.9, 11.1.0, 14.1.3:
-
-- gemc copies the header into MC::Event (atarget, ztarget, targetid, processid, weight) and
-  all LUND lines into MC::Lund. MC::Particle holds the tracked particles; gemc writes the light
-  ions as 45 (d), 46 (t), 47 (α), 49 (³He) there, whatever code the generator used, while
-  MC::True keeps full PDG codes.
-- **⁴He with truth matching**: coatjava's TruthMatch looks every MC::Particle PID up in
-  PDGDatabase, which (up to at least 14.2) does not know 46/47/49: the engine fails on those
-  events and MC::GenMatch/MC::RecMatch stay empty. Fixed in coatjava by adding the gemc codes
-  to PDGDatabase and guarding the lookup; until that is released, ⁴He samples reconstructed
-  with truth matching lose the match banks (the rest of the reconstruction is unaffected).
+The ¹³C/¹³N remnant is written with the ν_e code 12, active. This is a quick fix for compatibility
+with OSG. As a neutrino, the remnant appears in MC::Particle without interacting, and nitrogen
+events can be identified by PID 12 in MC::Particle or by `atarget = 14` in MC::Event.
+The remnant mass (column 11) is the sum of the nucleon masses.
